@@ -1,7 +1,7 @@
 import { Avatar } from "radix-ui";
 import { Link, useLocation } from "react-router";
 import { Building2Icon, LayoutDashboardIcon } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarInset, SidebarProvider as SidebarProvider_ } from "./ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarInset, SidebarProvider as SidebarProvider_ } from "./ui/sidebar";
 
 const LINKS = [
     { title: "Jobs", to: "/", icon: Building2Icon },
@@ -12,8 +12,11 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     const { pathname } = useLocation();
     return (
         <SidebarProvider_>
-            <Sidebar collapsible="icon" className="bg-indigo-100 dark:bg-slate-950">
-                <SidebarContent className="p-4">
+            <Sidebar collapsible="icon" className="[&>div]:p-4 bg-indigo-100 dark:bg-slate-950">
+                <SidebarHeader className="mb-4 group-data-[collapsible=icon]:hidden border-b-2 border-indigo-300 dark:border-slate-700 pb-4">
+                    <h1 className="font-bold text-ellipsis overflow-hidden whitespace-nowrap">Talent Technical Evaluation</h1>
+                </SidebarHeader>
+                <SidebarContent>
                     {LINKS.map(({title,to,icon: Icon}, i) => (
                         <Link
                             key={i}
@@ -26,7 +29,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
                         </Link>
                     ))}
                 </SidebarContent>
-                <SidebarFooter className="p-4">
+                <SidebarFooter>
                     <div className="group-data-[collapsible=icon]:-mx-2 flex gap-2">
                         <Avatar.Avatar className="shrink-0">
                             <Avatar.AvatarImage
