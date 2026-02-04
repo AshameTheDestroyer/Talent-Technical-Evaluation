@@ -28,7 +28,7 @@ class ApplicationAnswerWithQuestion(ApplicationAnswer):
     weight: int = Field(..., ge=1, le=5)  # range 1-5
     skill_categories: List[str] = Field(..., min_items=1)
     type: QuestionType
-    options: Optional[List[dict]] = []
+    question_options: Optional[List[dict]] = []  # Options for the question
     correct_options: Optional[List[str]] = []
     rationale: str = Field(..., min_length=1, max_length=1000)
 

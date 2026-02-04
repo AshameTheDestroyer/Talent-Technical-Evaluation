@@ -102,7 +102,14 @@ def calculate_application_score(db: Session, application_id: str) -> float:
     # Parse the answers and questions
     import json
     try:
-        answers = json.loads(application.answers) if application.answers else []
+        # Check if answers is already a list (parsed) or a string (needs parsing)
+        if isinstance(application.answers, str):
+            answers = json.loads(application.answers) if application.answers else []
+        else:
+            # Assume it's already a list object
+            answers = application.answers if application.answers else []
+
+        # Questions should always be a JSON string from the database
         questions = json.loads(assessment.questions) if assessment.questions else []
     except json.JSONDecodeError:
         logger.error(f"Failed to parse answers or questions for application ID: {application_id}")
