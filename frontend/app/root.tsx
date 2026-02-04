@@ -7,6 +7,7 @@ import {
     ScrollRestoration,
     isRouteErrorResponse,
 } from "react-router";
+import { Avatar } from "radix-ui";
 import type { Route } from "./+types/root";
 import { Header } from "./components/header";
 import { ToastContainer } from "react-toastify";
