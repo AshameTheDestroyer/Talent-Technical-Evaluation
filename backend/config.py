@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
+    # AI Provider Configuration
+    mistral_api_key: Optional[str] = None
+
     # Application Configuration
     app_name: str = "AI-Powered Hiring Assessment Platform"
     app_version: str = "0.1.0"

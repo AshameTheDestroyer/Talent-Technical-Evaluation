@@ -5,6 +5,7 @@ from integrations.ai_integration.mock_ai_generator import MockAIGenerator
 from integrations.ai_integration.openai_generator import OpenAIGenerator
 from integrations.ai_integration.anthropic_generator import AnthropicGenerator
 from integrations.ai_integration.google_ai_generator import GoogleAIGenerator
+from integrations.ai_integration.mistral_generator import MistralGenerator
 
 
 class AIProvider(Enum):
@@ -15,6 +16,7 @@ class AIProvider(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     GOOGLE = "google"
+    MISTRAL = "mistral"
 
 
 class AIGeneratorFactory:
@@ -72,7 +74,8 @@ AIGeneratorFactory.register_provider(AIProvider.MOCK, MockAIGenerator)
 AIGeneratorFactory.register_provider(AIProvider.OPENAI, OpenAIGenerator)
 AIGeneratorFactory.register_provider(AIProvider.ANTHROPIC, AnthropicGenerator)
 AIGeneratorFactory.register_provider(AIProvider.GOOGLE, GoogleAIGenerator)
+AIGeneratorFactory.register_provider(AIProvider.MISTRAL, MistralGenerator)
 
 
 # Optional: Create a default provider
-DEFAULT_PROVIDER = AIProvider.MOCK
+DEFAULT_PROVIDER = AIProvider.MISTRAL

@@ -85,7 +85,7 @@ def create_new_assessment(id: str, assessment: AssessmentCreate, db: Session = D
     return {"id": db_assessment.id}
 
 @router.patch("/jobs/{jid}/{aid}/regenerate")
-def regenerate_assessment(jid: str, aid: str, regenerate_data: AssessmentRegenerate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def regenerate_assessment_route(jid: str, aid: str, regenerate_data: AssessmentRegenerate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Regenerate an assessment"""
     logger.info(f"Regenerating assessment for job ID: {jid}, assessment ID: {aid} by user: {current_user.id}")
     # Only HR users can regenerate assessments
@@ -95,7 +95,11 @@ def regenerate_assessment(jid: str, aid: str, regenerate_data: AssessmentRegener
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only HR users can regenerate assessments"
         )
-    updated_assessment = regenerate_assessment(db, aid, **regenerate_data.model_dump(exclude_unset=True))
+    # Extract parameters from the request data using dict() to maintain consistency with other routes
+    regenerate_params = regenerate_data.dict(exclude_unset=True)
+
+    # Call the service function with the extracted parameters
+    updated_assessment = regenerate_assessment(db, aid, **regenerate_params)
     if not updated_assessment:
         logger.warning(f"Assessment not found for regeneration with job ID: {jid}, assessment ID: {aid}")
         raise HTTPException(
