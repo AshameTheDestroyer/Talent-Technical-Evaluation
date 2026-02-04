@@ -1,5 +1,4 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -9,5 +8,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-    return <Welcome />;
+    return <main className="container mx-auto p-4">
+        <h1 className="font-bold text-4xl">Talent Technical Evaluation</h1>
+    </main>
 }
