@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from database.database import get_db
@@ -17,7 +18,7 @@ def health_check(db: Session = Depends(get_db)):
     try:
         # Test database connection using SQLAlchemy
         # Execute a simple query to test the connection
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
 
         return {
             "status": "healthy",
