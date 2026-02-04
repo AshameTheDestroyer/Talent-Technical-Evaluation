@@ -7,13 +7,13 @@ import {
     ScrollRestoration,
     isRouteErrorResponse,
 } from "react-router";
+import { Avatar } from "radix-ui";
 import type { Route } from "./+types/root";
 import { Header } from "./components/header";
 import { Building2Icon, LayoutDashboardIcon } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarInset, SidebarProvider } from "./components/ui/sidebar";
 
 import "./app.css";
-import { Avatar } from "radix-ui";
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -40,14 +40,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             </Link>
                         </SidebarContent>
                         <SidebarFooter className="p-4">
-                            <div className="group-data-[collapsible=icon]:-mx-5 flex gap-2">
+                            <div className="group-data-[collapsible=icon]:-mx-2 flex gap-2">
                                <Avatar.Avatar className="shrink-0">
                                     <Avatar.AvatarImage
                                         src="https://github.com/ashamethedestroyer.png"
                                         alt="@ashamethedestroyer"
-                                        className="size-10 rounded-full"
+                                        className="size-10 rounded-full group-data-[collapsible=icon]:size-8"
                                     />
-                                    <Avatar.AvatarFallback className="rounded-full bg-gray-200 dark:bg-gray-800 size-10 flex items-center justify-center">A</Avatar.AvatarFallback>
+                                    <Avatar.AvatarFallback className="rounded-full bg-gray-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">A</Avatar.AvatarFallback>
                                 </Avatar.Avatar>
                                 <div className="overflow-hidden group-data-[collapsible=icon]:hidden">
                                     <p className="font-bold whitespace-nowrap text-ellipsis overflow-hidden">Hashem Wannous</p>
