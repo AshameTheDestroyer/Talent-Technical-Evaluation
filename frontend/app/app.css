@@ -11,7 +11,7 @@
 
 html,
 body {
-    @apply bg-indigo-100 text-gray-900 dark:bg-gray-900 dark:text-white;
+    @apply bg-indigo-50 text-gray-900 dark:bg-gray-900 dark:text-white;
 
     @media (prefers-color-scheme: dark) {
         color-scheme: dark;
@@ -61,8 +61,6 @@ body {
 
 :root {
     --radius: 0.625rem;
-    --background: rgb(255, 255, 255);
-    --foreground: rgb(3, 7, 18);
     --card: rgb(255, 255, 255);
     --card-foreground: rgb(3, 7, 18);
     --popover: rgb(255, 255, 255);
@@ -95,8 +93,6 @@ body {
 }
 
 .dark {
-    --background: rgb(3, 7, 18);
-    --foreground: rgb(249, 250, 251);
     --card: rgb(16, 24, 40);
     --card-foreground: rgb(249, 250, 251);
     --popover: rgb(16, 24, 40);
