@@ -12,7 +12,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     const { pathname } = useLocation();
     return (
         <SidebarProvider_>
-            <Sidebar collapsible="icon" className="[&>div]:p-4 bg-indigo-100 dark:bg-slate-950">
+            <Sidebar collapsible="icon" className="p-4  bg-indigo-100 dark:bg-slate-950">
                 <SidebarHeader className="mb-4 group-data-[collapsible=icon]:hidden border-b-2 border-indigo-300 dark:border-slate-700 pb-4">
                     <h1 className="font-bold text-ellipsis overflow-hidden whitespace-nowrap">Talent Technical Evaluation</h1>
                 </SidebarHeader>
@@ -30,7 +30,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
                     ))}
                 </SidebarContent>
                 <SidebarFooter>
-                    <div className="group-data-[collapsible=icon]:-mx-2 flex gap-2">
+                    <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
                         <Avatar.Avatar className="shrink-0">
                             <Avatar.AvatarImage
                                 src="https://github.com/ashamethedestroyer.png"
