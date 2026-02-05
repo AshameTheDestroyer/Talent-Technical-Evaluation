@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { useGetJobs } from "~/services/useGetJobs";
 import { Paginator } from "~/components/paginator";
 import { Loader2Icon, PlusIcon } from "lucide-react";
+import { useGetMyUser } from "~/services/useGetMyUser";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -18,6 +19,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function JobsRoute() {
     const { data: { data: jobs, total } = { data: [] }, isLoading, isError, refetch } = useGetJobs();
+    const { data: myUser } = useGetMyUser();
     const Navigate = useNavigate();
 
     return (
@@ -25,10 +27,12 @@ export default function JobsRoute() {
             <header className="flex place-content-between gap-4 flex-wrap">
                 <h1 className="font-bold text-4xl">Active Jobs</h1>
                 <div className="flex flex-col gap-2 place-content-center">
-                    <Button className="mb-2 sm:mb-0" onClick={() => Navigate("/jobs/create")}>
-                        <PlusIcon />
-                        Create New Job
-                    </Button>
+                    {myUser?.role == "hr" && (
+                        <Button className="mb-2 sm:mb-0" onClick={() => Navigate("/jobs/create")}>
+                            <PlusIcon />
+                            Create New Job
+                        </Button>
+                    )}
                     <p className="text-center">{total} jobs in total</p>
                 </div>
             </header>
