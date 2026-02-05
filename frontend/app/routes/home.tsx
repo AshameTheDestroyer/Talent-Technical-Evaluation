@@ -1,8 +1,4 @@
-import { useNavigate } from "react-router";
 import type { Route } from "./+types/home";
-import { useGetJobs } from "~/services/useGetJobs";
-import { Paginator } from "~/components/paginator";
-import { Loader2Icon, User2Icon } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
     return [
