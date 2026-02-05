@@ -21,6 +21,10 @@ export const queryClient = new QueryClient();
 export function Layout({ children }: { children: React.ReactNode }) {
     const { pathname } = useLocation();
 
+    if (!pathname.startsWith("/registration") && typeof window !== "undefined" && localStorage.getItem("token") === null) {
+        window.location.replace("/registration");
+    }
+
     return (
         <html lang="en">
             <head>
