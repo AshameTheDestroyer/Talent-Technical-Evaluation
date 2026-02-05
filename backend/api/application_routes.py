@@ -307,7 +307,7 @@ def get_my_applications(page: int = 1, limit: int = 10, db: Session = Depends(ge
     )
 
 
-@router.get("/my-applications/{id}", response_model=MyApplicationResponse)
+@router.get("/my-applications/{id}", response_model=ApplicationDetailedResponse)
 def get_my_application(id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get a specific application by ID for the current logged-in user"""
     logger.info(f"Retrieving application with ID: {id} for user ID: {current_user.id}")
@@ -321,32 +321,117 @@ def get_my_application(id: str, db: Session = Depends(get_db), current_user: Use
             detail="Application not found or does not belong to the current user"
         )
 
+    # Get the assessment to retrieve the passing score
+    assessment = get_assessment(db, application.assessment_id)
+    if not assessment:
+        logger.error(f"Assessment not found for ID: {application.assessment_id}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Assessment not found"
+        )
+
     # Calculate score
     score = calculate_application_score(db, application.id)
 
-    # Get assessment to retrieve passing score
-    assessment = get_assessment(db, application.assessment_id)
+    # Get user information
+    from services.user_service import get_user
+    user = get_user(db, application.user_id)
 
-    # Get job details
-    job = get_job(db, application.job_id)
+    # Parse answers from JSON string
+    import json
+    answers = json.loads(application.answers) if application.answers else []
 
-    # Create response object that matches technical requirements exactly
-    application_response = MyApplicationResponse(
+    # Get the assessment questions to enrich the answers with question details
+    assessment_questions = json.loads(assessment.questions) if assessment.questions else []
+    question_map = {q['id']: q for q in assessment_questions}
+
+    # Enrich answers with question details and rationales
+    enriched_answers = []
+    for answer in answers:
+        question_id = answer.get('question_id')
+        question_data = question_map.get(question_id, {})
+
+        # For text-based questions, we might want to add rationale from AI scoring
+        rationale = 'No rationale available'
+        if question_data.get('type') == 'text_based':
+            # Use AI service to get rationale for text-based answers
+            from schemas.assessment import AssessmentQuestion, AssessmentQuestionOption
+            from schemas.enums import QuestionType
+
+            # Create a temporary question object for AI scoring
+            temp_question = AssessmentQuestion(
+                id=question_data['id'],
+                text=question_data['text'],
+                weight=question_data['weight'],
+                skill_categories=question_data['skill_categories'],
+                type=QuestionType(question_data['type']),
+                options=[AssessmentQuestionOption(text=opt['text'], value=opt['value']) for opt in question_data.get('options', [])],
+                correct_options=question_data.get('correct_options', [])
+            )
+
+            from services.ai_service import score_answer
+            try:
+                score_result = score_answer(
+                    question=temp_question,
+                    answer_text=answer.get('text', ''),
+                    selected_options=answer.get('options', [])
+                )
+                rationale = score_result.get('rationale', 'No rationale provided') or 'No rationale provided'
+            except Exception:
+                rationale = 'Unable to generate rationale'
+
+        # Create an ApplicationAnswerWithQuestion object with proper field assignments
+        # The 'options' field in the parent class refers to selected options (List[str])
+        # The 'question_options' field in the child class refers to question options (List[dict])
+        from schemas.application import ApplicationAnswerWithQuestion
+        from schemas.enums import QuestionType
+        enriched_answer = ApplicationAnswerWithQuestion(
+            question_id=answer.get('question_id'),
+            text=answer.get('text'),
+            options=answer.get('options', []),  # Selected options from the applicant (List[str])
+            question_text=question_data.get('text', ''),
+            weight=question_data.get('weight', 1),
+            skill_categories=question_data.get('skill_categories', []),
+            type=QuestionType(question_data.get('type', 'text_based')),  # Convert to enum
+            question_options=question_data.get('options', []),  # Question's possible options (List[dict])
+            correct_options=question_data.get('correct_options', []),
+            rationale=rationale
+        )
+
+        # Add the selected options as an additional attribute if needed
+        # But for now, we'll rely on the schema as defined
+        enriched_answers.append(enriched_answer)
+
+    # Create the detailed response
+    assessment_details_obj = None
+    if assessment:
+        try:
+            assessment_details_obj = ApplicationAssessment(
+                id=assessment.id,
+                title=assessment.title,
+                passing_score=assessment.passing_score,
+                created_at=None  # Assessment model doesn't have created_at field
+            )
+        except Exception as e:
+            logger.error(f"Error creating assessment details: {str(e)}")
+            assessment_details_obj = None
+
+    application_detail = ApplicationDetailedResponse(
         id=application.id,
-        job=MyApplicationsJob(
-            id=job.id if job else "",
-            title=job.title if job else "",
-            seniority=job.seniority if job else "",
-            description=job.description if job else ""
-        ) if job else None,
-        assessment=MyApplicationsAssessment(
-            id=assessment.id if assessment else "",
-            title=assessment.title if assessment else "",
-            passing_score=assessment.passing_score if assessment else 0.0
-        ) if assessment else None,
+        job_id=application.job_id,
+        assessment_id=application.assessment_id,
+        user_id=application.user_id,
+        answers=enriched_answers,
         score=score,
-        created_at=application.created_at.isoformat() if application.created_at else None
+        passing_score=assessment.passing_score,
+        assessment_details=assessment_details_obj,
+        user={
+            'id': user.id if user else None,
+            'first_name': user.first_name if user else None,
+            'last_name': user.last_name if user else None,
+            'email': user.email if user else None
+        } if user else None
     )
 
     logger.info(f"Successfully retrieved application with ID: {id} for user ID: {current_user.id}")
-    return application_response
+    return application_detail
