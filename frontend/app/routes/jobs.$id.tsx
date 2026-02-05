@@ -58,8 +58,11 @@ export default function JobDetailRoute() {
             <JobCard job={job} isStatic />
             <section className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Job's Assessments</h3>
+                {assessments.length === 0 && (
+                    <p className="text-center text-gray-600 dark:text-gray-300">No assessments found for this job.</p>
+                )}
                 {assessments?.map(assessment => <AssessmentCard assessment={assessment} jid={job.id} />)}
-                {total && <Paginator total={total} />}
+                {total != null && total > 0 && <Paginator total={total} />}
             </section>
         </main>
     );
