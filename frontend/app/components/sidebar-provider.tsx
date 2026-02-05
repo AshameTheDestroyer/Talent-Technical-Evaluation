@@ -4,13 +4,14 @@ import { toast } from "react-toastify";
 import { Link, useLocation } from "react-router";
 import { HTTPManager } from "~/managers/HTTPManager";
 import { useGetMyUser } from "~/services/useGetMyUser";
-import { Building2Icon, LayoutDashboardIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Building2Icon, FilesIcon, LayoutDashboardIcon } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarInset, SidebarProvider as SidebarProvider_ } from "./ui/sidebar";
 
 const LINKS = [
     { title: "Jobs", to: "/jobs", icon: Building2Icon },
     { title: "Dashboard", to: "/dashboard", icon: LayoutDashboardIcon, role: "hr" },
+    { title: "My Applications", to: "/my-applications", icon: FilesIcon, role: "applicant" },
 ]
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {

@@ -4,7 +4,7 @@ import { HTTPManager } from "~/managers/HTTPManager";
 import type { Pagination } from "~/types/pagination";
 import { usePagination } from "~/hooks/use-pagination";
 
-export const GET_JOB_ASSESSMENT_APPLICATION_KEY = "job-assessments-application";
+export const GET_JOB_ASSESSMENT_APPLICATION_KEY = "job-assessments-applications";
 
 export type Application = {
     id: string;

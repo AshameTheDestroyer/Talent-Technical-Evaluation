@@ -9,6 +9,8 @@ export default [
 	route("jobs/:jid/assessments/:id", "routes/jobs.$jid.assessments.$id.tsx"),
 	route("jobs/:jid/assessments/:aid/applications", "routes/jobs.$jid.assessments.$aid.applications.tsx"),
 	route("jobs/:jid/assessments/:aid/applications/:id", "routes/jobs.$jid.assessments.$aid.applications.$id.tsx"),
+	route("my-applications", "routes/my-applications.tsx"),
+	route("my-applications/:id", "routes/my-applications.$id.tsx"),
 	route("dashboard", "routes/dashboard.tsx"),
 	route("registration", "routes/registration.tsx"),
 ] satisfies RouteConfig;
