@@ -47,7 +47,7 @@ export default function Registration() {
         if (token) {
           localStorage.setItem("token", token);
           toast.success("Logged in");
-          navigate("/dashboard");
+          navigate("/");
         } else {
           toast.error("Login succeeded but no token returned");
         }
@@ -64,7 +64,7 @@ export default function Registration() {
         if (token) {
           localStorage.setItem("token", token);
           toast.success("Account created");
-          navigate("/dashboard");
+          navigate("/");
         } else {
           toast.error("Signup succeeded but no token returned");
         }
