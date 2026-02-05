@@ -86,7 +86,7 @@ export default function AssessmentDetailRoute() {
                         </div>
                     ))}
                 </div>
-                {total && <Paginator total={total} />}
+                {total != null && total > 0 && <Paginator total={total} />}
             </section>
         </main>
     );
