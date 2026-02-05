@@ -56,7 +56,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
                                             alt="@ashamethedestroyer"
                                             className="size-10 rounded-full group-data-[collapsible=icon]:size-8"
                                         /> */}
-                                        <Avatar.AvatarFallback className="rounded-full bg-gray-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
+                                        <Avatar.AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
                                             {myUser ? `${myUser.first_name[0]}${myUser.last_name[0]}` : "U"}
                                         </Avatar.AvatarFallback>
                                     </Avatar.Avatar>
