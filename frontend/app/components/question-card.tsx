@@ -76,7 +76,7 @@ export function QuestionCard({
                             </div>
                         ))}
                         {isStatic && question.correct_options &&  question.correct_options.some(co => !(answers[question.id] || []).includes(co)) &&
-                            <div className="text-red-600 dark:text-red-400 ml-2">(You did not select all correct answers)</div>}
+                            <div className="text-red-600 dark:text-red-400 mt-2">(You did not select all correct answers)</div>}
                     </div>
                 ),
             }[question.type]}
