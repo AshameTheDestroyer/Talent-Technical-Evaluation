@@ -65,6 +65,15 @@ export default function AssessmentDetailRoute() {
         );
     }
 
+    useEffect(() => {
+        if (assessment == null) { return }
+
+        setAnswers(assessment.questions.reduce((accumulator, question) => {
+            accumulator[question.id] = question.type === "choose_many" ? [] : "";
+            return accumulator;
+        }, {} as Record<string, any>));
+    }, [assessment]);
+
     const totalWeights = assessment.questions.reduce((weights, question) => weights + question.weight, 0);
 
     function handleSubmit() {
