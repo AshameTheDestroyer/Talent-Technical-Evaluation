@@ -1,17 +1,17 @@
 import { toast } from "react-toastify";
-import { useParams } from "react-router";
-import { Loader2Icon } from "lucide-react";
+import { Link, useParams } from "react-router";
+import { ExternalLinkIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Label, RadioGroup } from "radix-ui";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { Checkbox } from "~/components/ui/checkbox";
+import { useGetMyUser } from "~/services/useGetMyUser";
 import { RadioGroupItem } from "~/components/ui/radio-group";
 import { AssessmentCard } from "~/components/assessment-card";
 import type { Route } from "./+types/jobs.$jid.assessments.$id";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
 import { usePostAssessmentApplication } from "~/services/usePostAssessmentApplication";
-import { useGetMyUser } from "~/services/useGetMyUser";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -86,6 +86,10 @@ export default function AssessmentDetailRoute() {
     return (
         <main className="container mx-auto p-4 flex flex-col gap-8">
             <AssessmentCard jid={jid || ""} assessment={assessment} isStatic />
+            <Link to={`/jobs/${jid}/assessment/${id}/applications`} className="text-indigo-600 hover:underline">
+                View Applications for this Assessment
+                <ExternalLinkIcon className="inline -translate-y-1 mx-2" />
+            </Link>
             <section className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Assessment's Questions</h3>
                 <div className="flex flex-col gap-4">

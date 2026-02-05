@@ -4,11 +4,11 @@ import { HTTPManager } from "~/managers/HTTPManager";
 export const GET_MY_USER_KEY = "my-user";
 
 export type User = {
-    "id": string
-    "email": string,
-    "last_name": string,
-    "first_name": string,
-    "role": "hr" | "applicant",
+    "id": string;
+    "email": string;
+    "last_name": string;
+    "first_name": string;
+    "role": "hr" | "applicant";
 }
 
 export const useGetMyUser = () => useQuery({
