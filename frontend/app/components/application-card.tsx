@@ -32,7 +32,7 @@ export function ApplicationCard({ application, aid, jid, isStatic = false, safeR
                     </p>
                 </div>
             </div>
-            <div className={cn("flex flex-col place-items-end rounded-md p-1", application.score >= application.passing_score ? "bg-green-600 dark:bg-green-700" : "bg-red-600 dark:bg-red-700")}>
+            <div className={cn("flex flex-col place-items-end rounded-md p-1", application.score >= application.passing_score ? "bg-green-600 text-green-100 dark:bg-green-700 dark:text-green-300" : "bg-red-600 text-red-100 dark:bg-red-700 dark:text-red-300")}>
                 <p>Score: {application.score}%</p>
                 <p>({application.passing_score}% to pass)</p>
             </div>
