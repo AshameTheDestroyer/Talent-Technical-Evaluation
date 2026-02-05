@@ -9,7 +9,6 @@
         "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-html,
 body {
     @apply bg-indigo-50 text-gray-900 dark:bg-gray-900 dark:text-white;
 
@@ -74,8 +73,8 @@ body {
     --accent: rgb(243, 244, 246);
     --accent-foreground: rgb(16, 24, 40);
     --destructive: rgb(231, 0, 11);
-    --border: rgb(229, 231, 235);
-    --input: rgb(229, 231, 235);
+    --border: rgb(141, 160, 197);
+    --input: rgb(141, 160, 197);
     --ring: rgb(153, 161, 175);
     --chart-1: rgb(245, 73, 0);
     --chart-2: rgb(0, 150, 137);
@@ -107,7 +106,7 @@ body {
     --accent-foreground: rgb(249, 250, 251);
     --destructive: rgb(255, 100, 103);
     --border: rgba(255, 255, 255, 0.1);
-    --input: rgba(255, 255, 255, 0.15);
+    --input: rgba(255, 255, 255, 0.1);
     --ring: rgb(106, 114, 130);
     --chart-1: rgb(20, 71, 230);
     --chart-2: rgb(0, 188, 125);

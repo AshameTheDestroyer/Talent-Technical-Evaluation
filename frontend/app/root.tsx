@@ -8,9 +8,13 @@ import {
 } from "react-router";
 import type { Route } from "./+types/root";
 import { Header } from "./components/header";
+import { ToastContainer } from "react-toastify";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SidebarProvider } from "./components/sidebar-provider";
 
 import "./app.css";
+
+export const queryClient = new QueryClient();
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -26,10 +30,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <Links />
             </head>
             <body>
-                <SidebarProvider>
-                    <Header />
-                    <main>{children}</main>
-                </SidebarProvider>
+                <QueryClientProvider client={queryClient}>
+                    <SidebarProvider>
+                        <Header />
+                        <main>{children}</main>
+                    </SidebarProvider>
+                </QueryClientProvider>
+                <ToastContainer />
                 <ScrollRestoration />
                 <Scripts />
             </body>
