@@ -88,6 +88,13 @@ export default function AssessmentDetailRoute() {
                                     </div>
                                 ),
                             }[question.type]}
+                            <footer className="flex flex-wrap gap-2">
+                                {question.skill_categories.map((skill) => (
+                                    <span key={skill} className="inline-block bg-indigo-300 px-3 py-1.5 rounded-xl dark:bg-gray-950">
+                                        {skill}
+                                    </span>
+                                ))}
+                            </footer>
                         </div>
                     ))}
                 </div>
