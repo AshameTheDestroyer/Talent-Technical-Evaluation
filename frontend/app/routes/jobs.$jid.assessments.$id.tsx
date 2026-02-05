@@ -9,7 +9,6 @@ import { AssessmentCard } from "~/components/assessment-card";
 import type { Route } from "./+types/jobs.$jid.assessments.$id";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
 import { usePostAssessmentApplication } from "~/services/usePostAssessmentApplication";
-import { useGetMyUser } from "~/services/useGetMyUser";
 
 export function meta({}: Route.MetaArgs) {
     return [
