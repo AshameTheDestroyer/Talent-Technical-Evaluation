@@ -91,7 +91,7 @@ export default function AssessmentDetailRoute() {
         <main className="container mx-auto p-4 flex flex-col gap-8">
             <AssessmentCard jid={jid || ""} assessment={assessment} isStatic />
             {myUser.role == "hr" && (
-                <Link to={`/jobs/${jid}/assessment/${id}/applications`} className="text-indigo-600 hover:underline">
+                <Link to={`/jobs/${jid}/assessments/${id}/applications`} className="text-indigo-600 hover:underline">
                     View Applications for this Assessment
                     <ExternalLinkIcon className="inline -translate-y-1 mx-2" />
                 </Link>
