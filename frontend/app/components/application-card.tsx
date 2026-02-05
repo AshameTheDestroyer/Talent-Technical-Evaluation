@@ -9,9 +9,10 @@ export function ApplicationCard({ application, aid, jid, isStatic = false } : { 
     return (
         <div
             tabIndex={isStatic ? -1 : 0}
-            className={cn("p-4 flex flex-wrap justify-evenly gap-4 place-items-center", isStatic ? "" : "border rounded bg-indigo-100 dark:bg-gray-700  [:is(:hover,:focus)]:shadow-lg [:is(:hover,:focus)]:scale-101 transition-all cursor-pointer")}
+            className={cn("p-4 flex flex-wrap justify-between gap-4 place-items-center", isStatic ? "" : "border rounded bg-indigo-100 dark:bg-gray-700  [:is(:hover,:focus)]:shadow-lg [:is(:hover,:focus)]:scale-101 transition-all cursor-pointer")}
             onClick={() => isStatic || Navigate(`/jobs/${jid}/assessments/${aid}/applications/${application.id}`)}
         >
+            <h1 className={cn("grow font-bold w-full", isStatic ? "text-3xl" : "text-xl")}>{application.assessment_details.title}</h1>
             <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
                 <Avatar.Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
                     <Avatar.AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">

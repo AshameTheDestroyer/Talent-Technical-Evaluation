@@ -11,6 +11,11 @@ export type Application = {
     user: User;
     score: number;
     passing_score: number;
+    assessment_details: {
+        id: string;
+        title: string;
+        passing_score: number;
+    };
 };
 
 export const useGetJobAssessmentApplications = ({ jid, aid }: { jid: string, aid: string }) => {
