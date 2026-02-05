@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { useParams } from "react-router";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -26,7 +27,7 @@ export default function AssessmentDetailRoute() {
     const { data: assessment, isLoading, isError, refetch } = useGetJobAssessmentByID({ jid: jid || "", id: id || "" });
     const [answers, setAnswers] = useState({} as Record<string, any>);
 
-    const { mutate, isPending: isSubmittingLoading, isError: isSubmittingError } = usePostAssessmentApplication();
+    const { mutateAsync: submitAnswers, isPending: isSubmittingLoading } = usePostAssessmentApplication();
 
     if (isLoading) {
         return (
@@ -67,7 +68,7 @@ export default function AssessmentDetailRoute() {
     const totalWeights = assessment.questions.reduce((weights, question) => weights + question.weight, 0);
 
     function handleSubmit() {
-        mutate({
+        submitAnswers({
             job_id: jid || "",
             assessment_id: id || "",
             user_id: "",
@@ -76,6 +77,8 @@ export default function AssessmentDetailRoute() {
                 [typeof answer == "string" ? "text" : "options"]: typeof answer == "string" ? answer : Array.isArray(answer) ? answer : [answer],
             })),
         })
+        .then(() => toast.success("Assessment submitted successfully"))
+        .catch(error => toast.error(`Failed to submit assessment: ${error.message}`));
     }
 
     return (
@@ -139,7 +142,8 @@ export default function AssessmentDetailRoute() {
             </section>
             <footer className="mx-auto py-4">
                 <Button
-                    className="bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    disabled={isSubmittingLoading}
+                    className="bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50"
                     onClick={handleSubmit}
                 >
                     Submit Answers
