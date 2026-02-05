@@ -71,6 +71,7 @@ def create_assessment(db: Session, job_id: str, assessment: AssessmentCreate) ->
         id=str(uuid.uuid4()),
         job_id=job_id,
         title=assessment.title,
+        duration=getattr(assessment, 'duration', None),  # Include duration if available
         passing_score=assessment.passing_score,
         questions=questions_json,  # Store as JSON string
         active=True
