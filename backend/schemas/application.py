@@ -65,3 +65,26 @@ class ApplicationDetailedListResponse(BaseModel):
     count: int
     total: int
     data: List[ApplicationResponse]
+
+class MyApplicationsJob(BaseModel):
+    id: str
+    title: str
+    seniority: str
+    description: str
+
+class MyApplicationsAssessment(BaseModel):
+    id: str
+    title: str
+    passing_score: float
+
+class MyApplicationResponse(BaseModel):
+    id: str
+    job: MyApplicationsJob
+    assessment: MyApplicationsAssessment
+    score: float
+    created_at: Optional[str] = None
+
+class MyApplicationsListResponse(BaseModel):
+    count: int
+    total: int
+    data: List[MyApplicationResponse]
