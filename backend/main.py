@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
 # Import from our modules
@@ -33,6 +34,17 @@ app = FastAPI(
     description=settings.app_description,
     version=settings.app_version,
     lifespan=lifespan
+)
+
+# Configure CORS for frontend dev server(s)
+# Default to allowing the common Vite port and localhost:3000 for React dev
+origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000").split(",")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in origins if o.strip()],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include API routes
