@@ -1,12 +1,15 @@
 import { useParams } from "react-router";
 import { Loader2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Label, RadioGroup } from "radix-ui";
+import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { Checkbox } from "~/components/ui/checkbox";
 import { RadioGroupItem } from "~/components/ui/radio-group";
 import { AssessmentCard } from "~/components/assessment-card";
 import type { Route } from "./+types/jobs.$jid.assessments.$id";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
+import { usePostAssessmentApplication } from "~/services/usePostAssessmentApplication";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -21,6 +24,9 @@ export function meta({}: Route.MetaArgs) {
 export default function AssessmentDetailRoute() {
     const { jid, id } = useParams();
     const { data: assessment, isLoading, isError, refetch } = useGetJobAssessmentByID({ jid: jid || "", id: id || "" });
+    const [answers, setAnswers] = useState({} as Record<string, any>);
+
+    const { mutate, isPending: isSubmittingLoading, isError: isSubmittingError } = usePostAssessmentApplication();
 
     if (isLoading) {
         return (
@@ -49,7 +55,28 @@ export default function AssessmentDetailRoute() {
         );
     }
 
+    useEffect(() => {
+        if (assessment == null) { return }
+
+        setAnswers(assessment.questions.reduce((accumulator, question) => {
+            accumulator[question.id] = question.type === "choose_many" ? [] : "";
+            return accumulator;
+        }, {} as Record<string, any>));
+    }, [assessment]);
+
     const totalWeights = assessment.questions.reduce((weights, question) => weights + question.weight, 0);
+
+    function handleSubmit() {
+        mutate({
+            job_id: jid || "",
+            assessment_id: id || "",
+            user_id: "",
+            answers: Object.entries(answers).map(([question_id, answer]) => ({
+                question_id,
+                [typeof answer == "string" ? "text" : "options"]: typeof answer == "string" ? answer : Array.isArray(answer) ? answer : [answer],
+            })),
+        })
+    }
 
     return (
         <main className="container mx-auto p-4 flex flex-col gap-8">
@@ -66,9 +93,9 @@ export default function AssessmentDetailRoute() {
                                 </span>
                             </header>
                             {{
-                                "text_based": <Textarea className="w-full resize-none" placeholder="Answer goes here..." />,
+                                "text_based": <Textarea className="w-full resize-none" placeholder="Answer goes here..." value={answers[question.id]} onChange={e => setAnswers(prev => ({ ...prev, [question.id]: e.target.value }))} />,
                                 "choose_one": (
-                                    <RadioGroup.RadioGroup>
+                                    <RadioGroup.RadioGroup value={answers[question.id]} onValueChange={value => setAnswers(prev => ({ ...prev, [question.id]: value }))}>
                                         {question.options.map((option, i) => (
                                             <div key={i} className="flex items-center gap-3">
                                                 <RadioGroupItem value={option.value} id={`${question.id}-option-${i}`} className="cursor-pointer" />
@@ -81,7 +108,18 @@ export default function AssessmentDetailRoute() {
                                     <div>
                                         {question.options.map((option, i) => (
                                             <div key={i} className="flex items-center gap-3">
-                                                <Checkbox id={`${question.id}-option-${i}`} className="cursor-pointer" />
+                                                <Checkbox id={`${question.id}-option-${i}`} className="cursor-pointer" value={answers[question.id]?.includes(option.value)}
+                                                    onCheckedChange={checked => {
+                                                        setAnswers(prev => {
+                                                            const currentSelections = prev[question.id] || [];
+                                                            if (checked) {
+                                                                return { ...prev, [question.id]: [...currentSelections, option.value] };
+                                                            } else {
+                                                                return { ...prev, [question.id]: currentSelections.filter((v: string) => v !== option.value) };
+                                                            }
+                                                        });
+                                                    }}
+                                                />
                                                 <Label.Label htmlFor={`${question.id}-option-${i}`} className="cursor-pointer">{option.text}</Label.Label>
                                             </div>
                                         ))}
@@ -99,6 +137,14 @@ export default function AssessmentDetailRoute() {
                     ))}
                 </div>
             </section>
+            <footer className="mx-auto py-4">
+                <Button
+                    className="bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    onClick={handleSubmit}
+                >
+                    Submit Answers
+                </Button>
+            </footer>
         </main>
     );
 }
