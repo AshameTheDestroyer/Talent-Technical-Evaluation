@@ -38,7 +38,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
                             key={i}
                             to={to}
                             title={title}
-                            className={`flex place-items-center group-data-[collapsible=icon]:place-content-center gap-2 px-4 py-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:-mx-2 hover:bg-indigo-200 dark:hover:bg-slate-800 rounded-md ${pathname === to ? "bg-indigo-300 dark:bg-slate-700" : ""}`}
+                            className={`flex place-items-center group-data-[collapsible=icon]:place-content-center gap-2 px-4 py-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:-mx-2 hover:bg-indigo-200 dark:hover:bg-slate-800 rounded-md ${pathname.startsWith(to) ? "bg-indigo-300 dark:bg-slate-700" : ""}`}
                         >
                             <Icon />{" "}
                             <span className="group-data-[collapsible=icon]:hidden">{title}</span>

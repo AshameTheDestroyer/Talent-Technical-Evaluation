@@ -1,8 +1,10 @@
-import { Loader2Icon } from "lucide-react";
 import type { Route } from "./+types/jobs";
+import { useNavigate } from "react-router";
 import { JobCard } from "~/components/job-card";
+import { Button } from "~/components/ui/button";
 import { useGetJobs } from "~/services/useGetJobs";
 import { Paginator } from "~/components/paginator";
+import { Loader2Icon, PlusIcon } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -16,12 +18,19 @@ export function meta({}: Route.MetaArgs) {
 
 export default function JobsRoute() {
     const { data: { data: jobs, total } = { data: [] }, isLoading, isError, refetch } = useGetJobs();
+    const Navigate = useNavigate();
 
     return (
         <main className="container mx-auto p-4 flex flex-col gap-4">
             <header className="flex place-content-between gap-4 flex-wrap">
                 <h1 className="font-bold text-4xl">Active Jobs</h1>
-                <p>{total} jobs in total</p>
+                <div className="flex flex-col gap-2 place-content-center">
+                    <Button className="mb-2 sm:mb-0" onClick={() => Navigate("/jobs/create")}>
+                        <PlusIcon />
+                        Create New Job
+                    </Button>
+                    <p className="text-center">{total} jobs in total</p>
+                </div>
             </header>
 
             <section className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
@@ -43,7 +52,7 @@ export default function JobsRoute() {
                     </div>
                 )}
                 {jobs?.map(job => <JobCard key={job.id} job={job} />)}
-                {total && <Paginator total={total} />}
+                {total != null && total > 0 && <Paginator total={total} />}
             </section>
         </main>
     );
