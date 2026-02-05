@@ -42,6 +42,10 @@ from .application_service import (
     calculate_application_score
 )
 
+from .ai_service import (
+    estimate_assessment_duration
+)
+
 __all__ = [
     "get_user",
     "get_user_by_email",
@@ -71,5 +75,6 @@ __all__ = [
     "create_application",
     "update_application",
     "delete_application",
-    "calculate_application_score"
+    "calculate_application_score",
+    "estimate_assessment_duration"
 ]

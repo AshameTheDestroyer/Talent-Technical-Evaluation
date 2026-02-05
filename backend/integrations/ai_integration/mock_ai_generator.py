@@ -376,3 +376,31 @@ class MockAIGenerator(AIGeneratorInterface):
 
         # Cap the score at 1.0
         return min(score, 1.0)
+
+    def estimate_duration(
+        self,
+        prompt: str
+    ) -> str:
+        """
+        Estimate the duration for an assessment based on a prompt.
+
+        Args:
+            prompt: A detailed prompt describing the assessment
+
+        Returns:
+            String response from the AI containing the estimated duration
+        """
+        # For the mock implementation, we'll return a simple response with a number
+        # based on the length of the prompt and keywords
+        import random
+        
+        # Count the number of questions mentioned in the prompt
+        question_count = prompt.count("Question ")  # Count occurrences of "Question "
+        
+        # Estimate duration based on question count (3 minutes per question, with some randomness)
+        estimated_minutes = max(5, question_count * 3 + random.randint(-2, 5))
+        
+        # Ensure it's within reasonable bounds
+        estimated_minutes = min(180, max(5, estimated_minutes))
+        
+        return f"{estimated_minutes} minutes"

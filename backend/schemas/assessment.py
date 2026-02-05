@@ -25,14 +25,12 @@ class AssessmentBase(BaseSchema):
 
 class AssessmentCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
-    duration: Optional[int] = Field(None, ge=1)  # Duration in seconds, if provided should be positive
     passing_score: int = Field(..., ge=20, le=80)  # range 20-80
     questions_types: List[QuestionType]  # array of enum(choose_one, choose_many, text_based)
     additional_note: Optional[str] = Field(None, max_length=500)
 
 class AssessmentUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=200)
-    duration: Optional[int] = Field(None, ge=1)  # Duration in seconds, if provided should be positive
     passing_score: Optional[int] = Field(None, ge=20, le=80)  # range 20-80
     questions: Optional[List[AssessmentQuestion]] = None
     active: Optional[bool] = None

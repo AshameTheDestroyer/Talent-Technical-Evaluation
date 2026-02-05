@@ -37,3 +37,20 @@ class OpenAIGenerator(AIGeneratorInterface):
         # In a real implementation, this would call the OpenAI API
         # For now, we'll raise an exception indicating it's not implemented
         raise NotImplementedError("OpenAI answer scoring not yet implemented")
+
+    def estimate_duration(
+        self,
+        prompt: str
+    ) -> str:
+        """
+        Estimate the duration for an assessment based on a prompt.
+
+        Args:
+            prompt: A detailed prompt describing the assessment
+
+        Returns:
+            String response from the AI containing the estimated duration
+        """
+        # In a real implementation, this would call the OpenAI API
+        # For now, we'll raise an exception indicating it's not implemented
+        raise NotImplementedError("OpenAI duration estimation not yet implemented")
