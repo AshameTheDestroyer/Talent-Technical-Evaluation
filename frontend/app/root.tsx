@@ -3,20 +3,24 @@ import {
     Links,
     Outlet,
     Scripts,
+    useLocation,
     ScrollRestoration,
     isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
 import { Header } from "./components/header";
 import { ToastContainer } from "react-toastify";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeToggle } from "./components/theme-toggle";
 import { SidebarProvider } from "./components/sidebar-provider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./app.css";
 
 export const queryClient = new QueryClient();
 
 export function Layout({ children }: { children: React.ReactNode }) {
+    const { pathname } = useLocation();
+
     return (
         <html lang="en">
             <head>
@@ -31,10 +35,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </head>
             <body>
                 <QueryClientProvider client={queryClient}>
-                    <SidebarProvider>
-                        <Header />
-                        <main>{children}</main>
-                    </SidebarProvider>
+                    {pathname.startsWith("/registration") ? (
+                        <>
+                            <header className="flex flex-row-reverse place-content-between p-4">
+                                <ThemeToggle />
+                            </header>
+                            <main>{children}</main>
+                        </>
+                    ) : (
+                        <SidebarProvider>
+                            <Header />
+                            <main>{children}</main>
+                        </SidebarProvider>
+                    )}
                 </QueryClientProvider>
                 <ToastContainer />
                 <ScrollRestoration />
