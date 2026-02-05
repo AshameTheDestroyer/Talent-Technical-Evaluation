@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type { Route } from "./+types/dashboard";
 import { useGetJobs } from "~/services/useGetJobs";
+import { useGetMyUser } from "~/services/useGetMyUser";
 import OverviewCharts from "~/components/overview-charts";
 
 export function meta({}: Route.MetaArgs) {
@@ -17,12 +18,23 @@ export default function Dashboard() {
     const { data, isLoading, isError } = useGetJobs();
     const jobs = data?.data ?? [];
 
+    const { data: myUser, isLoading: isMyUserLoading } = useGetMyUser();
+
     const totals = useMemo(() => {
         const totalJobs = jobs.length;
         const totalApplicants = jobs.reduce((s, j) => s + (j.applicants_count ?? 0), 0);
         const activeJobs = jobs.filter(j => j.active).length;
         return { totalJobs, totalApplicants, activeJobs };
     }, [jobs]);
+
+
+    useEffect(() => {
+        if (myUser && myUser.role != "hr") {
+            if (typeof window !== "undefined") {
+                window.location.replace("/");
+            }
+        }
+    }, [myUser]);
 
     return (
         <div className="p-6 space-y-6">

@@ -1,15 +1,31 @@
 import { Avatar } from "radix-ui";
+import { Button } from "./ui/button";
+import { toast } from "react-toastify";
 import { Link, useLocation } from "react-router";
+import { HTTPManager } from "~/managers/HTTPManager";
+import { useGetMyUser } from "~/services/useGetMyUser";
 import { Building2Icon, LayoutDashboardIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarInset, SidebarProvider as SidebarProvider_ } from "./ui/sidebar";
 
 const LINKS = [
     { title: "Jobs", to: "/jobs", icon: Building2Icon },
-    { title: "Dashboard", to: "/dashboard", icon: LayoutDashboardIcon },
+    { title: "Dashboard", to: "/dashboard", icon: LayoutDashboardIcon, role: "hr" },
 ]
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
     const { pathname } = useLocation();
+    const { data: myUser } = useGetMyUser();
+
+    function handleLogout() {
+        HTTPManager.post("/users/registration/logout", {}).then(() => {
+            localStorage.removeItem("token");
+            if (typeof window !== "undefined") {
+                window.location.replace("/registration");
+            }
+        }).catch(error => toast.error("Logout failed: " + error?.message || "Unknown error"));
+    }
+
     return (
         <SidebarProvider_>
             <Sidebar collapsible="icon" className="p-4  bg-indigo-100 dark:bg-slate-950">
@@ -17,7 +33,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
                     <h1 className="font-bold text-ellipsis overflow-hidden whitespace-nowrap">Talent Technical Evaluation</h1>
                 </SidebarHeader>
                 <SidebarContent>
-                    {LINKS.map(({title,to,icon: Icon}, i) => (
+                    {LINKS.filter(link => !link.role || link.role === myUser?.role).map(({title,to,icon: Icon}, i) => (
                         <Link
                             key={i}
                             to={to}
@@ -30,26 +46,37 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
                     ))}
                 </SidebarContent>
                 <SidebarFooter>
-                    <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
-                        <Avatar.Avatar className="shrink-0">
-                            <Avatar.AvatarImage
-                                src="https://github.com/ashamethedestroyer.png"
-                                alt="@ashamethedestroyer"
-                                className="size-10 rounded-full group-data-[collapsible=icon]:size-8"
-                            />
-                            <Avatar.AvatarFallback className="rounded-full bg-gray-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
-                                A
-                            </Avatar.AvatarFallback>
-                        </Avatar.Avatar>
-                        <div className="overflow-hidden group-data-[collapsible=icon]:hidden">
-                            <p className="font-bold whitespace-nowrap text-ellipsis overflow-hidden">
-                                Hashem Wannous
-                            </p>
-                            <p className="whitespace-nowrap text-ellipsis overflow-hidden">
-                                @ashamethedestroyer
-                            </p>
+                    {myUser && (
+                        <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Avatar.Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
+                                        {/* <Avatar.AvatarImage
+                                            src="https://github.com/ashamethedestroyer.png"
+                                            alt="@ashamethedestroyer"
+                                            className="size-10 rounded-full group-data-[collapsible=icon]:size-8"
+                                        /> */}
+                                        <Avatar.AvatarFallback className="rounded-full bg-gray-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
+                                            {myUser ? `${myUser.first_name[0]}${myUser.last_name[0]}` : "U"}
+                                        </Avatar.AvatarFallback>
+                                    </Avatar.Avatar>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-min p-0">
+                                    <Button variant="ghost" className="w-full text-left" onClick={handleLogout}>
+                                        Logout
+                                    </Button>
+                                </PopoverContent>
+                            </Popover>
+                            <div className="overflow-hidden group-data-[collapsible=icon]:hidden">
+                                <p className="font-bold whitespace-nowrap text-ellipsis overflow-hidden text-start">
+                                    {myUser.first_name} {myUser.last_name}
+                                </p>
+                                <p className="whitespace-nowrap text-ellipsis overflow-hidden">
+                                    {myUser.email}
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </SidebarFooter>
             </Sidebar>
             <SidebarInset className="flex flex-col h-screen">
