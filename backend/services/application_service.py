@@ -20,6 +20,19 @@ def get_application(db: Session, application_id: str) -> Optional[Application]:
         logger.debug(f"Application not found for ID: {application_id}")
     return application
 
+def get_application_by_user(db: Session, application_id: str, user_id: str) -> Optional[Application]:
+    """Get application by ID and user ID"""
+    logger.debug(f"Retrieving application with ID: {application_id} for user ID: {user_id}")
+    application = db.query(Application).filter(
+        Application.id == application_id,
+        Application.user_id == user_id
+    ).first()
+    if application:
+        logger.debug(f"Found application: {application.id} for user: {user_id}")
+    else:
+        logger.debug(f"Application not found for ID: {application_id} and user ID: {user_id}")
+    return application
+
 def get_applications_by_job_and_assessment(db: Session, job_id: str, assessment_id: str, skip: int = 0, limit: int = 100) -> List[Application]:
     """Get list of applications by job and assessment IDs"""
     logger.debug(f"Retrieving applications for job ID: {job_id}, assessment ID: {assessment_id}, skip={skip}, limit={limit}")

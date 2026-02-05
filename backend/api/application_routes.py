@@ -5,7 +5,7 @@ import json
 
 from database.database import get_db
 from schemas import ApplicationCreate, ApplicationUpdate, ApplicationResponse, ApplicationListResponse, ApplicationDetailedResponse, ApplicationDetailedListResponse, MyApplicationsListResponse, MyApplicationResponse, MyApplicationsJob, MyApplicationsAssessment, ApplicationAssessment
-from services import create_application, get_application, get_applications_by_job_and_assessment, calculate_application_score, get_applications_by_user
+from services import create_application, get_application, get_applications_by_job_and_assessment, calculate_application_score, get_applications_by_user, get_application_by_user
 from services.assessment_service import get_assessment
 from services.job_service import get_job
 from utils.dependencies import get_current_user
@@ -260,7 +260,7 @@ def create_new_application(jid: str, aid: str, application: ApplicationCreate, d
 def get_my_applications(page: int = 1, limit: int = 10, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get list of applications for the current logged-in user"""
     logger.info(f"Retrieving applications for user ID: {current_user.id}, page: {page}, limit: {limit}")
-    
+
     skip = (page - 1) * limit
     applications = get_applications_by_user(db, current_user.id, skip=skip, limit=limit)
 
@@ -275,7 +275,7 @@ def get_my_applications(page: int = 1, limit: int = 10, db: Session = Depends(ge
 
         # Get assessment to retrieve passing score
         assessment = get_assessment(db, application.assessment_id)
-        
+
         # Get job details
         job = get_job(db, application.job_id)
 
@@ -305,3 +305,48 @@ def get_my_applications(page: int = 1, limit: int = 10, db: Session = Depends(ge
         total=total,
         data=application_responses
     )
+
+
+@router.get("/my-applications/{id}", response_model=MyApplicationResponse)
+def get_my_application(id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Get a specific application by ID for the current logged-in user"""
+    logger.info(f"Retrieving application with ID: {id} for user ID: {current_user.id}")
+
+    # Get the application for the current user
+    application = get_application_by_user(db, id, current_user.id)
+    if not application:
+        logger.warning(f"Application not found for ID: {id} and user ID: {current_user.id}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Application not found or does not belong to the current user"
+        )
+
+    # Calculate score
+    score = calculate_application_score(db, application.id)
+
+    # Get assessment to retrieve passing score
+    assessment = get_assessment(db, application.assessment_id)
+
+    # Get job details
+    job = get_job(db, application.job_id)
+
+    # Create response object that matches technical requirements exactly
+    application_response = MyApplicationResponse(
+        id=application.id,
+        job=MyApplicationsJob(
+            id=job.id if job else "",
+            title=job.title if job else "",
+            seniority=job.seniority if job else "",
+            description=job.description if job else ""
+        ) if job else None,
+        assessment=MyApplicationsAssessment(
+            id=assessment.id if assessment else "",
+            title=assessment.title if assessment else "",
+            passing_score=assessment.passing_score if assessment else 0.0
+        ) if assessment else None,
+        score=score,
+        created_at=application.created_at.isoformat() if application.created_at else None
+    )
+
+    logger.info(f"Successfully retrieved application with ID: {id} for user ID: {current_user.id}")
+    return application_response
