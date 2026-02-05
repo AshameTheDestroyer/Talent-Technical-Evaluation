@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { usePagination } from "~/hooks/use-pagination";
 import { HTTPManager } from "~/managers/HTTPManager";
 import type { Pagination } from "~/types/pagination";
+import { usePagination } from "~/hooks/use-pagination";
 
 export const GET_JOBS_KEY = "jobs";
 
