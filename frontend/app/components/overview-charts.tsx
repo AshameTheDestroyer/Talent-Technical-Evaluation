@@ -36,7 +36,7 @@ export default function OverviewCharts({ jobs, loading }: { jobs: Job[]; loading
             {
                 label: "Applicants",
                 data: applicantsData,
-                backgroundColor: "rgba(34,197,94,0.8)",
+                backgroundColor: "rgba(137, 34, 197, 0.8)",
             },
         ],
     };
@@ -46,7 +46,7 @@ export default function OverviewCharts({ jobs, loading }: { jobs: Job[]; loading
         datasets: [
             {
                 data: seniorityCounts,
-                backgroundColor: ["#60A5FA", "#F59E0B", "#A78BFA", "#FB7185"],
+                backgroundColor: ["#60fa86", "#0babf5", "#fac18b", "#FB7185"],
             },
         ],
     };
