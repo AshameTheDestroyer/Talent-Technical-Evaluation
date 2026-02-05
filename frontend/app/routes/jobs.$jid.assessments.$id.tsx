@@ -11,6 +11,7 @@ import { AssessmentCard } from "~/components/assessment-card";
 import type { Route } from "./+types/jobs.$jid.assessments.$id";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
 import { usePostAssessmentApplication } from "~/services/usePostAssessmentApplication";
+import { useGetMyUser } from "~/services/useGetMyUser";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -28,8 +29,18 @@ export default function AssessmentDetailRoute() {
     const [answers, setAnswers] = useState({} as Record<string, any>);
 
     const { mutateAsync: submitAnswers, isPending: isSubmittingLoading } = usePostAssessmentApplication();
+    const { data: myUser, isLoading: isMyUserLoading, isError: isMyUserError } = useGetMyUser();
 
-    if (isLoading) {
+    useEffect(() => {
+        if (assessment == null) { return }
+
+        setAnswers(assessment.questions.reduce((accumulator, question) => {
+            accumulator[question.id] = question.type === "choose_many" ? [] : "";
+            return accumulator;
+        }, {} as Record<string, any>));
+    }, [assessment]);
+
+    if (isLoading || isMyUserLoading) {
         return (
             <main className="container mx-auto p-4 flex flex-col gap-2 place-items-center">
                 <div className="flex flex-col gap-2 place-items-center">
@@ -40,7 +51,7 @@ export default function AssessmentDetailRoute() {
         );
     }
 
-    if (isError) {
+    if (isError || isMyUserError) {
         return (
             <main className="container mx-auto p-4 flex flex-col gap-2">
                 <div className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100 p-4 rounded flex flex-col gap-2 place-items-center">
@@ -56,22 +67,13 @@ export default function AssessmentDetailRoute() {
         );
     }
 
-    useEffect(() => {
-        if (assessment == null) { return }
-
-        setAnswers(assessment.questions.reduce((accumulator, question) => {
-            accumulator[question.id] = question.type === "choose_many" ? [] : "";
-            return accumulator;
-        }, {} as Record<string, any>));
-    }, [assessment]);
-
     const totalWeights = assessment.questions.reduce((weights, question) => weights + question.weight, 0);
 
     function handleSubmit() {
         submitAnswers({
             job_id: jid || "",
             assessment_id: id || "",
-            user_id: "",
+            user_id: myUser!.id,
             answers: Object.entries(answers).map(([question_id, answer]) => ({
                 question_id,
                 [typeof answer == "string" ? "text" : "options"]: typeof answer == "string" ? answer : Array.isArray(answer) ? answer : [answer],
@@ -141,13 +143,15 @@ export default function AssessmentDetailRoute() {
                 </div>
             </section>
             <footer className="mx-auto py-4">
-                <Button
-                    disabled={isSubmittingLoading}
-                    className="bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50"
-                    onClick={handleSubmit}
-                >
-                    Submit Answers
-                </Button>
+                {myUser.role === "applicant" && (
+                    <Button
+                        disabled={isSubmittingLoading}
+                        className="bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50"
+                        onClick={handleSubmit}
+                    >
+                        Submit Answers
+                    </Button>
+                )}
             </footer>
         </main>
     );
