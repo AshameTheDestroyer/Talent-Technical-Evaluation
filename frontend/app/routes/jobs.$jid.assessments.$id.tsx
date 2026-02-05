@@ -9,6 +9,7 @@ import { AssessmentCard } from "~/components/assessment-card";
 import type { Route } from "./+types/jobs.$jid.assessments.$id";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
 import { usePostAssessmentApplication } from "~/services/usePostAssessmentApplication";
+import { useGetMyUser } from "~/services/useGetMyUser";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -64,15 +65,6 @@ export default function AssessmentDetailRoute() {
             </main>
         );
     }
-
-    useEffect(() => {
-        if (assessment == null) { return }
-
-        setAnswers(assessment.questions.reduce((accumulator, question) => {
-            accumulator[question.id] = question.type === "choose_many" ? [] : "";
-            return accumulator;
-        }, {} as Record<string, any>));
-    }, [assessment]);
 
     const totalWeights = assessment.questions.reduce((weights, question) => weights + question.weight, 0);
 
