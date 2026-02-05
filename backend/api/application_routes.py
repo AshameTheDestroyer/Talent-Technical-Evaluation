@@ -4,9 +4,10 @@ from typing import List
 import json
 
 from database.database import get_db
-from schemas import ApplicationCreate, ApplicationUpdate, ApplicationResponse, ApplicationListResponse, ApplicationDetailedResponse, ApplicationDetailedListResponse
-from services import create_application, get_application, get_applications_by_job_and_assessment, calculate_application_score
+from schemas import ApplicationCreate, ApplicationUpdate, ApplicationResponse, ApplicationListResponse, ApplicationDetailedResponse, ApplicationDetailedListResponse, MyApplicationsListResponse, MyApplicationResponse, MyApplicationsJob, MyApplicationsAssessment, ApplicationAssessment
+from services import create_application, get_application, get_applications_by_job_and_assessment, calculate_application_score, get_applications_by_user
 from services.assessment_service import get_assessment
+from services.job_service import get_job
 from utils.dependencies import get_current_user
 from models.user import User
 from logging_config import get_logger
@@ -55,8 +56,18 @@ def get_applications_list(jid: str, aid: str, page: int = 1, limit: int = 10, db
         # Create response object that matches technical requirements exactly
         application_response = {
             'id': application.id,
+            'job_id': application.job_id,
+            'assessment_id': application.assessment_id,
+            'user_id': application.user_id,
+            'answers': [],  # Not including answers in the list view for performance
             'score': score,
             'passing_score': assessment.passing_score,
+            'assessment_details': {
+                'id': assessment.id,
+                'title': assessment.title,
+                'passing_score': assessment.passing_score,
+                'created_at': None  # Assessment model doesn't have created_at field
+            },
             'user': {
                 'id': user.id if user else None,
                 'first_name': user.first_name if user else None,
@@ -78,14 +89,7 @@ def get_applications_list(jid: str, aid: str, page: int = 1, limit: int = 10, db
 def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get detailed application information including answers"""
     logger.info(f"Retrieving application detail for job ID: {jid}, assessment ID: {aid}, application ID: {id} by user: {current_user.id}")
-    # Only HR users can view application details
-    if current_user.role != "hr":
-        logger.warning(f"Unauthorized attempt to view application detail by user: {current_user.id} with role: {current_user.role}")
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only HR users can view application details"
-        )
-
+    
     # Get the application
     application = get_application(db, id)
     if not application or application.job_id != jid or application.assessment_id != aid:
@@ -93,6 +97,14 @@ def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(ge
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Application not found for this job and assessment"
+        )
+
+    # Authorization: Allow HR users or the applicant who owns the application
+    if current_user.role != "hr" and current_user.id != application.user_id:
+        logger.warning(f"Unauthorized attempt to view application detail by user: {current_user.id} with role: {current_user.role}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only HR users or the applicant who submitted the application can view application details"
         )
 
     # Get the assessment to retrieve the passing score
@@ -177,6 +189,19 @@ def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(ge
         enriched_answers.append(enriched_answer)
 
     # Create the detailed response
+    assessment_details_obj = None
+    if assessment:
+        try:
+            assessment_details_obj = ApplicationAssessment(
+                id=assessment.id,
+                title=assessment.title,
+                passing_score=assessment.passing_score,
+                created_at=None  # Assessment model doesn't have created_at field
+            )
+        except Exception as e:
+            logger.error(f"Error creating assessment details: {str(e)}")
+            assessment_details_obj = None
+    
     application_detail = ApplicationDetailedResponse(
         id=application.id,
         job_id=application.job_id,
@@ -185,6 +210,7 @@ def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(ge
         answers=enriched_answers,
         score=score,
         passing_score=assessment.passing_score,
+        assessment_details=assessment_details_obj,
         user={
             'id': user.id if user else None,
             'first_name': user.first_name if user else None,
@@ -228,3 +254,54 @@ def create_new_application(jid: str, aid: str, application: ApplicationCreate, d
     db_application = create_application(db, application)
     logger.info(f"Successfully created application with ID: {db_application.id} for job ID: {jid}, assessment ID: {aid}")
     return {"id": db_application.id}
+
+
+@router.get("/my-applications", response_model=MyApplicationsListResponse)
+def get_my_applications(page: int = 1, limit: int = 10, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Get list of applications for the current logged-in user"""
+    logger.info(f"Retrieving applications for user ID: {current_user.id}, page: {page}, limit: {limit}")
+    
+    skip = (page - 1) * limit
+    applications = get_applications_by_user(db, current_user.id, skip=skip, limit=limit)
+
+    # Calculate total count
+    total = len(get_applications_by_user(db, current_user.id, skip=0, limit=1000))  # Simplified for demo
+
+    # Create responses with job and assessment details
+    application_responses = []
+    for application in applications:
+        # Calculate score
+        score = calculate_application_score(db, application.id)
+
+        # Get assessment to retrieve passing score
+        assessment = get_assessment(db, application.assessment_id)
+        
+        # Get job details
+        job = get_job(db, application.job_id)
+
+        # Create response object that matches technical requirements exactly
+        application_response = MyApplicationResponse(
+            id=application.id,
+            job=MyApplicationsJob(
+                id=job.id if job else "",
+                title=job.title if job else "",
+                seniority=job.seniority if job else "",
+                description=job.description if job else ""
+            ) if job else None,
+            assessment=MyApplicationsAssessment(
+                id=assessment.id if assessment else "",
+                title=assessment.title if assessment else "",
+                passing_score=assessment.passing_score if assessment else 0.0
+            ) if assessment else None,
+            score=score,
+            created_at=application.created_at.isoformat() if application.created_at else None
+        )
+
+        application_responses.append(application_response)
+
+    logger.info(f"Successfully retrieved {len(applications)} applications out of total {total} for user ID: {current_user.id}")
+    return MyApplicationsListResponse(
+        count=len(applications),
+        total=total,
+        data=application_responses
+    )
