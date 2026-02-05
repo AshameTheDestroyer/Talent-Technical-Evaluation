@@ -278,3 +278,30 @@ Return ONLY the JSON array.
             assessment_questions.append(question)
 
         return assessment_questions
+
+    def estimate_duration(
+        self,
+        prompt: str
+    ) -> str:
+        """
+        Estimate the duration for an assessment based on a prompt.
+
+        Args:
+            prompt: A detailed prompt describing the assessment
+
+        Returns:
+            String response from the AI containing the estimated duration
+        """
+        messages = [
+            {"role": "system", "content": "You estimate assessment durations. Respond with only a number representing minutes."},
+            {"role": "user", "content": prompt},
+        ]
+
+        response = self.client.chat.complete(
+            model="mistral-small-latest",
+            messages=messages,
+            temperature=0.2,
+        )
+
+        content = response.choices[0].message.content
+        return content

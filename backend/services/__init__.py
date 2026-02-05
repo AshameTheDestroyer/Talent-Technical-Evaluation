@@ -36,10 +36,15 @@ from .application_service import (
     get_application,
     get_applications_by_job_and_assessment,
     get_applications_by_user,
+    get_application_by_user,
     create_application,
     update_application,
     delete_application,
     calculate_application_score
+)
+
+from .ai_service import (
+    estimate_assessment_duration
 )
 
 __all__ = [
@@ -68,8 +73,10 @@ __all__ = [
     "get_application",
     "get_applications_by_job_and_assessment",
     "get_applications_by_user",
+    "get_application_by_user",
     "create_application",
     "update_application",
     "delete_application",
-    "calculate_application_score"
+    "calculate_application_score",
+    "estimate_assessment_duration"
 ]

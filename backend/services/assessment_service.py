@@ -67,10 +67,20 @@ def create_assessment(db: Session, job_id: str, assessment: AssessmentCreate) ->
     # Convert the generated questions to JSON
     questions_json = json.dumps([q.model_dump() for q in generated_questions])
 
+    # Estimate the duration using AI
+    from services.ai_service import estimate_assessment_duration
+    duration = estimate_assessment_duration(
+        title=assessment.title,
+        job_info=job_info,
+        questions=generated_questions,
+        additional_note=assessment.additional_note
+    )
+
     db_assessment = Assessment(
         id=str(uuid.uuid4()),
         job_id=job_id,
         title=assessment.title,
+        duration=duration,
         passing_score=assessment.passing_score,
         questions=questions_json,  # Store as JSON string
         active=True
@@ -91,12 +101,76 @@ def update_assessment(db: Session, assessment_id: str, **kwargs) -> Optional[Ass
                 if isinstance(value, list):
                     # Value is already a JSON string if coming from regenerate_assessment
                     setattr(db_assessment, key, json.dumps([q.model_dump() if hasattr(q, 'model_dump') else q for q in value]))
+                    
+                    # If questions are being updated, recalculate the duration using AI
+                    from services.ai_service import estimate_assessment_duration
+                    from models.job import Job
+                    import json
+                    
+                    # Get the job information
+                    job = db.query(Job).filter(Job.id == db_assessment.job_id).first()
+                    job_info = {}
+                    if job:
+                        job_info = {
+                            "title": job.title,
+                            "seniority": job.seniority,
+                            "description": job.description,
+                            "skill_categories": json.loads(job.skill_categories) if job.skill_categories else []
+                        }
+                    
+                    # Parse the questions to pass to the AI
+                    questions = [q for q in value]
+                    
+                    # Estimate new duration based on updated questions
+                    duration = estimate_assessment_duration(
+                        title=db_assessment.title,
+                        job_info=job_info,
+                        questions=questions,
+                        additional_note=None  # Use None or get from somewhere if available
+                    )
+                    setattr(db_assessment, 'duration', duration)
                 elif isinstance(value, str):
                     # Value is already a JSON string
                     setattr(db_assessment, key, value)
+                    
+                    # If questions are being updated as a JSON string, parse them to estimate duration
+                    try:
+                        parsed_questions = json.loads(value)
+                        from schemas.assessment import AssessmentQuestion
+                        from services.ai_service import estimate_assessment_duration
+                        from models.job import Job
+                        
+                        # Get the job information
+                        job = db.query(Job).filter(Job.id == db_assessment.job_id).first()
+                        job_info = {}
+                        if job:
+                            job_info = {
+                                "title": job.title,
+                                "seniority": job.seniority,
+                                "description": job.description,
+                                "skill_categories": json.loads(job.skill_categories) if job.skill_categories else []
+                            }
+                        
+                        # Convert parsed questions to AssessmentQuestion objects
+                        questions = [AssessmentQuestion(**q) for q in parsed_questions]
+                        
+                        # Estimate new duration based on updated questions
+                        duration = estimate_assessment_duration(
+                            title=db_assessment.title,
+                            job_info=job_info,
+                            questions=questions,
+                            additional_note=None  # Use None or get from somewhere if available
+                        )
+                        setattr(db_assessment, 'duration', duration)
+                    except Exception as e:
+                        logger.warning(f"Could not estimate duration from JSON questions: {str(e)}")
+                        # If parsing fails, we'll skip duration recalculation
                 else:
                     # Handle other cases
                     setattr(db_assessment, key, json.dumps(value))
+            elif key == 'duration':
+                # Skip setting duration since it's handled by AI
+                continue
             else:
                 setattr(db_assessment, key, value)
         db.commit()
@@ -148,6 +222,19 @@ def regenerate_assessment(db: Session, assessment_id: str, **kwargs) -> Optional
 
         # Update the kwargs to use the generated questions
         kwargs['questions'] = questions_json
+        
+        # Estimate the duration using AI
+        from services.ai_service import estimate_assessment_duration
+        # Get the original assessment to access its title
+        original_assessment = get_assessment(db, assessment_id)
+        duration = estimate_assessment_duration(
+            title=original_assessment.title,
+            job_info=job_info,
+            questions=generated_questions,
+            additional_note=additional_note
+        )
+        kwargs['duration'] = duration
+
         # Remove questions_types from kwargs as it's not a field in the Assessment model
         del kwargs['questions_types']
 

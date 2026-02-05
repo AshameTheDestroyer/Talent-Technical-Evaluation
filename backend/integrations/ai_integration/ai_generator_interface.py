@@ -55,3 +55,19 @@ class AIGeneratorInterface(ABC):
             }
         """
         pass
+
+    @abstractmethod
+    def estimate_duration(
+        self,
+        prompt: str
+    ) -> str:
+        """
+        Estimate the duration for an assessment based on a prompt.
+
+        Args:
+            prompt: A detailed prompt describing the assessment
+
+        Returns:
+            String response from the AI containing the estimated duration
+        """
+        pass
