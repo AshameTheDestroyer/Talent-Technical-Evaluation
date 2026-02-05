@@ -19,16 +19,6 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-export function meta({}: Route.MetaArgs) {
-    return [
-        { title: "Job Details" },
-        {
-            name: "description",
-            content: "Detailed view of the selected job and its assessments.",
-        },
-    ];
-}
-
 export default function JobDetailRoute() {
     const { id } = useParams();
     const { data: job, isLoading: isJobLoading, isError: isJobError, refetch: refetchJob } = useGetJobByID({ id: id || "" });

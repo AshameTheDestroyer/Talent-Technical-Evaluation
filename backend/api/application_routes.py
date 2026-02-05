@@ -89,7 +89,7 @@ def get_applications_list(jid: str, aid: str, page: int = 1, limit: int = 10, db
 def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get detailed application information including answers"""
     logger.info(f"Retrieving application detail for job ID: {jid}, assessment ID: {aid}, application ID: {id} by user: {current_user.id}")
-    
+
     # Get the application
     application = get_application(db, id)
     if not application or application.job_id != jid or application.assessment_id != aid:
@@ -201,7 +201,7 @@ def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(ge
         except Exception as e:
             logger.error(f"Error creating assessment details: {str(e)}")
             assessment_details_obj = None
-    
+
     application_detail = ApplicationDetailedResponse(
         id=application.id,
         job_id=application.job_id,
