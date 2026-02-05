@@ -1,10 +1,21 @@
 import { useParams } from "react-router";
 import {Loader2Icon, } from "lucide-react";
+import type { Route } from "./+types/jobs.$id";
 import { JobCard } from "~/components/job-card";
 import { Paginator } from "~/components/paginator";
 import { useGetJobByID } from "~/services/useGetJobsByID";
 import { AssessmentCard } from "~/components/assessment-card";
 import { useGetJobAssessments } from "~/services/useGetJobAssessments";
+
+export function meta({}: Route.MetaArgs) {
+    return [
+        { title: "Job Details" },
+        {
+            name: "description",
+            content: "Detailed view of the selected job and its assessments.",
+        },
+    ];
+}
 
 export default function JobDetailRoute() {
     const { id } = useParams();
@@ -47,7 +58,7 @@ export default function JobDetailRoute() {
             <JobCard job={job} isStatic />
             <section className="flex flex-col gap-4">
                 <h3 className="text-xl font-semibold">Job's Assessments</h3>
-                {assessments?.map(assessment => <AssessmentCard assessment={assessment} />)}
+                {assessments?.map(assessment => <AssessmentCard assessment={assessment} jid={job.id} />)}
                 {total && <Paginator total={total} />}
             </section>
         </main>
