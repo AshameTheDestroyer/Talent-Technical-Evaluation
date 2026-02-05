@@ -1,13 +1,14 @@
 import { useParams } from "react-router";
 import { Loader2Icon } from "lucide-react";
-import type { Route } from "./+types/jobs.$jid.assessments.$aid.applications.$id";
-import { useGetJobAssessmentApplicationByID, type DetailedApplication } from "~/services/useGetJobAssessmentApplicationByID";
-import { ApplicationCard } from "~/components/application-card";
+import type { Route } from "./+types/my-applications";
 import { QuestionCard } from "~/components/question-card";
+import { ApplicationCard } from "~/components/application-card";
+import { useGetMyApplicationByID } from "~/services/useGetMyApplicationByID";
+import type { DetailedApplication } from "~/services/useGetJobAssessmentApplicationByID";
 
 export function meta({}: Route.MetaArgs) {
     return [
-        { title: "Application Details" },
+        { title: "My Application Details" },
         {
             name: "description",
             content: "Detailed view of the selected application, including candidate information and assessment results.",
@@ -15,9 +16,9 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-export default function ApplicationDetailsRoute() {
-    const { jid, aid, id } = useParams();
-    const { data: application, isLoading, isError, refetch } = useGetJobAssessmentApplicationByID({ jid: jid || "", aid: aid || "", id: id || "" });
+export default function MyApplicationDetailsRoute() {
+    const { id } = useParams();
+    const { data: application, isLoading, isError, refetch } = useGetMyApplicationByID({ id: id || "" });
 
     if (isLoading) {
         return (
@@ -50,7 +51,7 @@ export default function ApplicationDetailsRoute() {
 
     return (
         <main className="container mx-auto p-4 flex flex-col gap-4">
-            <ApplicationCard application={application} aid={aid || ""} jid={jid || ""} isStatic />
+            <ApplicationCard application={application} aid={application.assessment.id || ""} jid={application.job.id || ""} isStatic />
             {application.answers.map((answer: DetailedApplication["answers"][number]) => (
                 <QuestionCard
                     key={answer.question_id}

@@ -1,18 +1,22 @@
 import { cn } from "~/lib/utils";
 import { Avatar } from "radix-ui";
 import { useNavigate } from "react-router";
+import type { MyApplication } from "~/services/useGetMyApplications";
 import type { Application } from "~/services/useGetJobAssessmentApplications";
 
-export function ApplicationCard({ application, aid, jid, isStatic = false } : { application: Application, jid: string, aid: string, isStatic?: boolean }) {
+export function ApplicationCard({ application, aid, jid, isStatic = false, safeRoute = false } : { application: Application & { job?: MyApplication["job"] }, jid: string, aid: string, isStatic?: boolean, safeRoute?: boolean }) {
     const Navigate = useNavigate();
 
     return (
         <div
             tabIndex={isStatic ? -1 : 0}
             className={cn("p-4 flex flex-wrap justify-between gap-4 place-items-center", isStatic ? "" : "border rounded bg-indigo-100 dark:bg-gray-700  [:is(:hover,:focus)]:shadow-lg [:is(:hover,:focus)]:scale-101 transition-all cursor-pointer")}
-            onClick={() => isStatic || Navigate(`/jobs/${jid}/assessments/${aid}/applications/${application.id}`)}
+            onClick={() => isStatic || Navigate(safeRoute ? `/my-applications/${application.id}` : `/jobs/${jid}/assessments/${aid}/applications/${application.id}`)}
         >
-            <h1 className={cn("grow font-bold w-full", isStatic ? "text-3xl" : "text-xl")}>{application.assessment_details.title}</h1>
+            <header className="flex flex-col gap-2 w-full grow">
+                <h1 className={cn("font-bold", isStatic ? "text-3xl" : "text-xl")}>{application.assessment_details.title}</h1>
+                {application.job && <p className="text-gray-500 dark:text-gray-200">{application.job.title}</p>}
+            </header>
             <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
                 <Avatar.Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
                     <Avatar.AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">

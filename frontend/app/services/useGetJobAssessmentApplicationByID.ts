@@ -32,7 +32,7 @@ export type DetailedApplication = {
 };
 
 export const useGetJobAssessmentApplicationByID = ({ jid, aid, id }: { jid: string, aid: string, id: string }) => useQuery({
-    queryKey: [GET_JOB_ASSESSMENT_APPLICATION_BY_ID_KEY, jid, id],
+    queryKey: [GET_JOB_ASSESSMENT_APPLICATION_BY_ID_KEY, jid, aid, id],
     queryFn: async () =>
         HTTPManager.get<DetailedApplication>(
             `/applications/jobs/${jid}/assessment_id/${aid}/applications/${id}`,
