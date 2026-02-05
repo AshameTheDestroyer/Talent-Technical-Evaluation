@@ -21,6 +21,11 @@ export type DetailedApplication = {
         options: Array<string>;
         rationale: string;
     }>;
+    assessment_details: {
+        id: string;
+        title: string;
+        passing_score: number;
+    };
     user: User;
     score: number;
     passing_score: number;
