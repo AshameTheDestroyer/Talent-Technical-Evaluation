@@ -1,87 +1,123 @@
-# Welcome to React Router!
+# Talent Technical Evaluation
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+Comprehensive full‑stack ai-powered sample application for creating, managing, and evaluating hiring assessments. This repository contains a Python FastAPI backend and a TypeScript React frontend built with Vite and React Router. The project demonstrates common hiring workflows including job posting, assessment creation, candidate application, and AI-assisted scoring.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- User authentication and role-based flows (candidates, HR).
+- Job posting and management.
+- Assessments attached to jobs with rich question types.
+- Candidate application submission and progress tracking.
+- AI-powered scoring and rationalization.
+- Admin dashboard with overview charts and pagination.
 
-## Getting Started
+## Technology stack
 
-### Installation
+- Backend: Python, FastAPI, Pydantic, SQLAlchemy, Alembic, Uvicorn.
+- Frontend: React (TypeScript), React Router, Vite, TailwindCSS.
+- API client: Axios, React Query.
+- Database: SQLite (default; configurable via `DATABASE_URL`).
+- Dev & tooling: pytest, Pre-commit, ESLint/TypeScript (frontend).
 
-Install the dependencies:
+## Prerequisites
+
+- Python 3.10+ (recommended).
+- Node.js 18+ and npm or pnpm.
+
+## Quick start
+
+Follow these steps to run the backend and frontend locally.
+
+### Backend
+
+1. Change to the backend directory:
+
+   - `cd backend`
+
+2. Create a virtual environment and activate it:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+3. Install Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Create an environment file:
+
+   - Copy `.env.example` to `.env` and update values as needed (DB URL, secrets, AI keys).
+
+5. Run database migrations (Alembic):
+
+```bash
+alembic upgrade head
+```
+
+6. Start the development server:
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+The API will be available at `http://localhost:8000`. Open the automatic docs at `http://localhost:8000/docs`.
+
+See backend-specific notes in [backend/README.md](backend/README.md).
+
+### Frontend
+
+1. Change to the frontend directory:
+
+   - `cd frontend`
+
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-### Development
+3. Create an environment file:
 
-Start the development server with HMR:
+   - Copy `.env.example` to `.env` and set the API URL and any other values required.
+
+4. Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+The app will be available at `http://localhost:5173` by default.
 
-## Building for Production
+See frontend-specific instructions in [frontend/README.md](frontend/README.md).
 
-Create a production build:
+## Configuration & environment variables
 
-```bash
-npm run build
-```
+- Backend uses `.env` and supports overriding via environment variables. Key items include `DATABASE_URL`, `HOST`, `PORT`, and AI provider keys. Defaults are defined in `backend/config.py`.
+- Frontend uses `.env` in the `frontend` folder; copy `.env.example` and configure the API base URL.
 
-## Deployment
+## Running tests
 
-### Docker Deployment
+- Backend tests: from the `backend` directory run `pytest` or `python run_tests.py`.
+- Frontend: type-checking and other checks are available via the `package.json` scripts.
 
-To build and run using Docker:
+## Project structure
 
-```bash
-docker build -t my-app .
+- `backend/` — FastAPI application, models, services, tests, Alembic migrations.
+- `frontend/` — React TypeScript app, routes, components, and styles.
 
-# Run the container
-docker run -p 3000:3000 my-app
-```
+## Development notes
 
-The containerized application can be deployed to any platform that supports Docker, including:
+- The default backend database is SQLite for convenience. To use Postgres or another DB, set `DATABASE_URL` accordingly and run migrations.
+- CORS is configured to allow the common Vite dev port; update `CORS_ORIGINS` in the backend `.env` if your setup differs.
+- AI integration points are present under `backend/integrations/ai_integration` and `backend/services/ai_service.py` — supply API keys via `.env` to enable AI features.
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+## Contributing
 
-### DIY Deployment
+Contributions are welcome. Please open issues for bugs or feature requests and submit pull requests for changes. Follow existing code style and add tests for new behavior.
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+## License
 
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+This repository does not include a license file. Add a `LICENSE` if you intend to open-source the project.
