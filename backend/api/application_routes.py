@@ -4,7 +4,7 @@ from typing import List
 import json
 
 from database.database import get_db
-from schemas import ApplicationCreate, ApplicationUpdate, ApplicationResponse, ApplicationListResponse, ApplicationDetailedResponse, ApplicationDetailedListResponse, MyApplicationsListResponse, MyApplicationResponse, MyApplicationsJob, MyApplicationsAssessment
+from schemas import ApplicationCreate, ApplicationUpdate, ApplicationResponse, ApplicationListResponse, ApplicationDetailedResponse, ApplicationDetailedListResponse, MyApplicationsListResponse, MyApplicationResponse, MyApplicationsJob, MyApplicationsAssessment, ApplicationAssessment
 from services import create_application, get_application, get_applications_by_job_and_assessment, calculate_application_score, get_applications_by_user
 from services.assessment_service import get_assessment
 from services.job_service import get_job
@@ -56,8 +56,18 @@ def get_applications_list(jid: str, aid: str, page: int = 1, limit: int = 10, db
         # Create response object that matches technical requirements exactly
         application_response = {
             'id': application.id,
+            'job_id': application.job_id,
+            'assessment_id': application.assessment_id,
+            'user_id': application.user_id,
+            'answers': [],  # Not including answers in the list view for performance
             'score': score,
             'passing_score': assessment.passing_score,
+            'assessment_details': {
+                'id': assessment.id,
+                'title': assessment.title,
+                'passing_score': assessment.passing_score,
+                'created_at': None  # Assessment model doesn't have created_at field
+            },
             'user': {
                 'id': user.id if user else None,
                 'first_name': user.first_name if user else None,
@@ -179,6 +189,19 @@ def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(ge
         enriched_answers.append(enriched_answer)
 
     # Create the detailed response
+    assessment_details_obj = None
+    if assessment:
+        try:
+            assessment_details_obj = ApplicationAssessment(
+                id=assessment.id,
+                title=assessment.title,
+                passing_score=assessment.passing_score,
+                created_at=None  # Assessment model doesn't have created_at field
+            )
+        except Exception as e:
+            logger.error(f"Error creating assessment details: {str(e)}")
+            assessment_details_obj = None
+    
     application_detail = ApplicationDetailedResponse(
         id=application.id,
         job_id=application.job_id,
@@ -187,6 +210,7 @@ def get_application_detail(jid: str, aid: str, id: str, db: Session = Depends(ge
         answers=enriched_answers,
         score=score,
         passing_score=assessment.passing_score,
+        assessment_details=assessment_details_obj,
         user={
             'id': user.id if user else None,
             'first_name': user.first_name if user else None,

@@ -44,10 +44,17 @@ class ApplicationCreate(ApplicationBase):
 class ApplicationUpdate(BaseModel):
     answers: Optional[List[ApplicationAnswer]] = Field(None, min_items=1)
 
+class ApplicationAssessment(BaseModel):
+    id: str
+    title: str
+    passing_score: Optional[int] = None
+    created_at: Optional[str] = None
+
 class ApplicationResponse(ApplicationBase):
     id: str
     score: Optional[float] = None
     passing_score: Optional[float] = None
+    assessment_details: Optional[ApplicationAssessment] = None
 
     class Config:
         from_attributes = True
