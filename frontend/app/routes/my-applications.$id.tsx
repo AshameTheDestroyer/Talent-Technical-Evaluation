@@ -51,7 +51,7 @@ export default function MyApplicationDetailsRoute() {
 
     return (
         <main className="container mx-auto p-4 flex flex-col gap-4">
-            <ApplicationCard application={application} aid={application.assessment.id || ""} jid={application.job.id || ""} isStatic />
+            <ApplicationCard application={application} aid={application.assessment_id || ""} jid={application.job_id || ""} isStatic />
             {application.answers.map((answer: DetailedApplication["answers"][number]) => (
                 <QuestionCard
                     key={answer.question_id}
