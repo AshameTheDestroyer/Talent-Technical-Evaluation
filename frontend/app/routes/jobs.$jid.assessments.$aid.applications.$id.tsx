@@ -48,15 +48,14 @@ export default function ApplicationDetailsRoute() {
 
     const totalWeights = application.answers.reduce((weights, answer) => weights + answer.weight, 0);
 
-    console.log(application)
-
     return (
-        <main className="container mx-auto p-4 flex flex-col gap-2">
+        <main className="container mx-auto p-4 flex flex-col gap-4">
             <ApplicationCard application={application} aid={aid || ""} jid={jid || ""} isStatic />
             {application.answers.map((answer: DetailedApplication["answers"][number]) => (
                 <QuestionCard
                     key={answer.question_id}
                     isStatic
+                    displayCheckboxMessage
                     question={{
                         type: answer.type,
                         weight: answer.weight,

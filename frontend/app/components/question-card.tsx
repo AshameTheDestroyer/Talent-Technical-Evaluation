@@ -1,9 +1,9 @@
+import { cn } from "~/lib/utils";
 import { Label } from "radix-ui";
 import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import type { Assessment } from "~/services/useGetJobAssessments";
-import { cn } from "~/lib/utils";
 
 export function QuestionCard({
     answers,
@@ -12,22 +12,22 @@ export function QuestionCard({
     setAnswers,
     totalWeights,
     isStatic = false,
+    displayCheckboxMessage = false,
 } : {
     isStatic?: boolean;
     rationale?: string;
     totalWeights: number;
     answers: Record<string, any>;
+    displayCheckboxMessage?: boolean;
     question: Assessment["questions"][number];
     setAnswers: React.Dispatch<React.SetStateAction<Record<string, any>>>;
 }) {
-    console.log({answers})
-
     return (
         <div className="border p-4 flex flex-col gap-2 rounded bg-indigo-100 dark:bg-gray-800">
             <header className="flex place-content-between gap-4 place-items-start">
                 <h4 className="font-semibold mb-2">{question.text}</h4>
                 <span className="inline-flex gap-2 place-items-center px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-gray-700">
-                    {totalWeights > 0 ? `~${Math.floor((question.weight / totalWeights) * 100) / 100}` : "0"}
+                    {totalWeights > 0 ? `~${Math.floor((question.weight / totalWeights) * 100)}%` : "0%"}
                 </span>
             </header>
             {{
@@ -75,8 +75,8 @@ export function QuestionCard({
                                 ) : "cursor-pointer")}>{option.text}</Label.Label>
                             </div>
                         ))}
-                        {isStatic && question.correct_options &&  question.correct_options.some(co => !(answers[question.id] || []).includes(co)) &&
-                            <div className="text-red-600 dark:text-red-400 mt-2">(You did not select all correct answers)</div>}
+                        {isStatic && displayCheckboxMessage && question.correct_options &&  question.correct_options.some(co => !(answers[question.id] || []).includes(co)) &&
+                            <div className="text-red-600 dark:text-red-400 mt-2">(Not all correct answers are selected)</div>}
                     </div>
                 ),
             }[question.type]}

@@ -6,7 +6,7 @@ import { useGetJobByID } from "~/services/useGetJobsByID";
 import { AssessmentCard } from "~/components/assessment-card";
 import { ApplicationCard } from "~/components/application-card";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
-import type { Route } from "./+types/jobs.$jid.assessment.$aid.applications";
+import type { Route } from "./+types/jobs.$jid.assessments.$aid.applications";
 import { useGetJobAssessmentApplications } from "~/services/useGetJobAssessmentApplications";
 
 export function meta({}: Route.MetaArgs) {
