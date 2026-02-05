@@ -4,7 +4,7 @@ import { Building2Icon, LayoutDashboardIcon } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarInset, SidebarProvider as SidebarProvider_ } from "./ui/sidebar";
 
 const LINKS = [
-    { title: "Jobs", to: "/", icon: Building2Icon },
+    { title: "Jobs", to: "/jobs", icon: Building2Icon },
     { title: "Dashboard", to: "/dashboard", icon: LayoutDashboardIcon },
 ]
 

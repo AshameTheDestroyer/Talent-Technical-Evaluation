@@ -6,7 +6,7 @@ export function Paginator({ total }: { total: number }) {
     const { page, limit, setPage, setLimit } = usePagination();
     const totalPages = Math.max(1, Math.ceil(total / Math.max(1, limit)));
     return (
-        <footer className="flex place-items-center place-content-between gap-4 flex-wrap">
+        <footer className="flex place-items-center place-content-between gap-4 flex-wrap col-span-full">
             <div className="flex flex-wrap gap-4 place-items-center">
                 <Button onClick={() => setPage(Math.max(1, page - 1))} disabled={page <= 1}>
                     Prev
