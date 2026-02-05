@@ -1,3 +1,4 @@
+import { Loader2Icon } from "lucide-react";
 import type { Route } from "./+types/jobs";
 import { useNavigate } from "react-router";
 import { JobCard } from "~/components/job-card";
