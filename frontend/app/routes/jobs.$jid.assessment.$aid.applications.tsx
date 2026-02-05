@@ -1,10 +1,10 @@
-import { Avatar } from "radix-ui";
 import { useParams } from "react-router";
 import { Loader2Icon } from "lucide-react";
 import { JobCard } from "~/components/job-card";
 import { Paginator } from "~/components/paginator";
 import { useGetJobByID } from "~/services/useGetJobsByID";
 import { AssessmentCard } from "~/components/assessment-card";
+import { ApplicationCard } from "~/components/application-card";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
 import type { Route } from "./+types/jobs.$jid.assessment.$aid.applications";
 import { useGetJobAssessmentApplications } from "~/services/useGetJobAssessmentApplications";
@@ -66,24 +66,7 @@ export default function AssessmentDetailRoute() {
                     {applications.length === 0 ? (
                         <p>No applications found for this assessment.</p>
                     ) : applications.map(application => (
-                        <div key={application.id} className="border p-4 rounded bg-indigo-100 dark:bg-gray-700 flex flex-wrap justify-evenly gap-4 place-items-center">
-                            <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
-                                <Avatar.Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
-                                    <Avatar.AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
-                                        {application.user ? `${application.user.first_name[0]}${application.user.last_name[0]}` : "U"}
-                                    </Avatar.AvatarFallback>
-                                </Avatar.Avatar>
-                                <div className="overflow-hidden group-data-[collapsible=icon]:hidden">
-                                    <p className="font-bold whitespace-nowrap text-ellipsis overflow-hidden text-start">
-                                        {application.user.first_name} {application.user.last_name}
-                                    </p>
-                                    <p className="whitespace-nowrap text-ellipsis overflow-hidden">
-                                        {application.user.email}
-                                    </p>
-                                </div>
-                            </div>
-                            <p>Score: {application.score}/{application.passing_score}</p>
-                        </div>
+                        <ApplicationCard key={application.id} application={application} jid={jid || ""} aid={aid || ""} />
                     ))}
                 </div>
                 {total != null && total > 0 && <Paginator total={total} />}
