@@ -1,4 +1,4 @@
 from main import app
-from asgiref.wsgi import WsgiToAsgi
+from asgiref.wsgi import AsgiToWsgi
 
-application = WsgiToAsgi(app)
+application = AsgiToWsgi(app)
