@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
@@ -33,7 +33,7 @@ app = FastAPI(
     title=settings.app_name,
     description=settings.app_description,
     version=settings.app_version,
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # Configure CORS for frontend dev server(s)
@@ -47,12 +47,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+api_router = APIRouter(prefix="/api")
 # Include API routes
-app.include_router(root_router)
-app.include_router(user_router)
-app.include_router(job_router)
-app.include_router(assessment_router)
-app.include_router(application_router)
+api_router.include_router(root_router)
+api_router.include_router(user_router)
+api_router.include_router(job_router)
+api_router.include_router(assessment_router)
+api_router.include_router(application_router)
+
+app.include_router(api_router)
 
 logger.info("Application routes registered")
 
