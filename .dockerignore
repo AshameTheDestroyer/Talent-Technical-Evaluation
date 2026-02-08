@@ -1,0 +1,23 @@
+# Frontend
+frontend/node_modules
+frontend/.env*
+frontend/.env.local
+frontend/build
+
+# Backend
+backend/__pycache__
+backend/*.pyc
+backend/.env*
+backend/.venv
+backend/venv
+backend/*.egg-info
+
+# Project
+.git
+.gitignore
+*.log
+logs/
+*.sqlite3
+assessment_platform.db
+.env
+.env.local

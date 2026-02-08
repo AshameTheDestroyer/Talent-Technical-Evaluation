@@ -1,8 +1,20 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
+// Use runtime configuration with fallback to environment variable
+// Handle SSR by checking if window is available
+const getBaseURL = () => {
+    if (typeof window !== 'undefined' && (window as any).APP_CONFIG?.API_BASE_URL) {
+        return (window as any).APP_CONFIG.API_BASE_URL;
+    }
+    // Fallback to environment variable during build time
+    return import.meta.env.VITE_APP_API_URL || undefined;
+};
+
+const baseURL = getBaseURL();
+
 export const HTTPManager = axios.create({
-    baseURL: import.meta.env.VITE_APP_API_URL,
+    baseURL: baseURL,
     headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",

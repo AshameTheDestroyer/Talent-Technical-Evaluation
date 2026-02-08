@@ -55,6 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </QueryClientProvider>
                 <ToastContainer />
                 <ScrollRestoration />
+                <script src="/config.js"></script>
                 <Scripts />
             </body>
         </html>

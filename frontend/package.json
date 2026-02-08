@@ -1,5 +1,6 @@
 {
   "name": "talent-technical-evaluation",
+  "homepage": ".",
   "private": true,
   "type": "module",
   "scripts": {
