@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { XIcon } from "lucide-react"
 import { Close, Content, Description, Overlay, Portal, Dialog as SheetPrimitive, Title, Trigger } from "@radix-ui/react-dialog"

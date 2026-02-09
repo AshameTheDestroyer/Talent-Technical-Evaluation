@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "./ui/button";
 import { useSidebar } from "./ui/sidebar";
 import { Breadcrumbs } from "./breadcrumbs";
