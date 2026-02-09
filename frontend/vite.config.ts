@@ -6,6 +6,6 @@ import { reactRouter } from "@react-router/dev/vite";
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   build: {
-    sourcemap: true,
+    sourcemap: false,
   },
 });
