@@ -1,5 +1,5 @@
+import { useState } from "react";
 import { toast } from "react-toastify";
-import React, { useState } from "react";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";

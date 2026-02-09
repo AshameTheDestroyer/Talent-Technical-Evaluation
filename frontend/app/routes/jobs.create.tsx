@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { XIcon } from "lucide-react";
 import { toast } from "react-toastify";
-import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
