@@ -1,6 +1,6 @@
-import { Avatar } from "radix-ui";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
+import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Link, useLocation } from "react-router";
 import { HTTPManager } from "~/managers/HTTPManager";
 import { useGetMyUser } from "~/services/useGetMyUser";
@@ -51,16 +51,16 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
                         <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
                             <Popover>
                                 <PopoverTrigger>
-                                    <Avatar.Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
+                                    <Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
                                         {/* <Avatar.AvatarImage
                                             src="https://github.com/ashamethedestroyer.png"
                                             alt="@ashamethedestroyer"
                                             className="size-10 rounded-full group-data-[collapsible=icon]:size-8"
                                         /> */}
-                                        <Avatar.AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
+                                        <AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
                                             {myUser ? `${myUser.first_name[0]}${myUser.last_name[0]}` : "U"}
-                                        </Avatar.AvatarFallback>
-                                    </Avatar.Avatar>
+                                        </AvatarFallback>
+                                    </Avatar>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-min p-0">
                                     <Button variant="ghost" className="w-full text-left" onClick={handleLogout}>

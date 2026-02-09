@@ -1,6 +1,6 @@
-import { Label } from "radix-ui";
 import { toast } from "react-toastify";
 import React, { useState } from "react";
+import { Label } from "@radix-ui/react-label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -167,12 +167,12 @@ export default function AssessmentGenerateRoute() {
                                         toggleType(option.value as any)
                                     }
                                 />
-                                <Label.Label
+                                <Label
                                     htmlFor={`${option.value}-option`}
                                     className="cursor-pointer"
                                 >
                                     {option.label}
-                                </Label.Label>
+                                </Label>
                             </div>
                         ))}
                     </div>

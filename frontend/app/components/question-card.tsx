@@ -1,7 +1,7 @@
 import { cn } from "~/lib/utils";
-import { Label } from "radix-ui";
 import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
+import { Label } from "@radix-ui/react-label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import type { Assessment } from "~/services/useGetJobAssessments";
 
@@ -42,11 +42,11 @@ export function QuestionCard({
                         {question.options.map((option, i) => (
                             <div key={i} className="flex items-center gap-3">
                                 <RadioGroupItem value={option.value} id={`${question.id}-option-${i}`} className={cn(isStatic ? "" : "cursor-pointer")} />
-                                <Label.Label htmlFor={`${question.id}-option-${i}`} className={cn(isStatic ? (
+                                <Label htmlFor={`${question.id}-option-${i}`} className={cn(isStatic ? (
                                     answers[question.id]?.includes(option.value) ? (
                                         question.correct_options?.includes(option.value) ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
                                     ) : ""
-                                ) : "cursor-pointer")}>{option.text}</Label.Label>
+                                ) : "cursor-pointer")}>{option.text}</Label>
                             </div>
                         ))}
                     </RadioGroup>
@@ -68,11 +68,11 @@ export function QuestionCard({
                                     }
                                     className={cn(isStatic ? "" : "cursor-pointer")}
                                 />
-                                <Label.Label htmlFor={`${question.id}-option-${i}`} className={cn(isStatic ? (
+                                <Label htmlFor={`${question.id}-option-${i}`} className={cn(isStatic ? (
                                     answers[question.id]?.includes(option.value) ? (
                                         question.correct_options?.includes(option.value) ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
                                     ) : ""
-                                ) : "cursor-pointer")}>{option.text}</Label.Label>
+                                ) : "cursor-pointer")}>{option.text}</Label>
                             </div>
                         ))}
                         {isStatic && displayCheckboxMessage && question.correct_options &&  question.correct_options.some(co => !(answers[question.id] || []).includes(co)) &&

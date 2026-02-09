@@ -1,6 +1,6 @@
 import { cn } from "~/lib/utils";
-import { Avatar } from "radix-ui";
 import { useNavigate } from "react-router";
+import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import type { MyApplication } from "~/services/useGetMyApplications";
 import type { Application } from "~/services/useGetJobAssessmentApplications";
 
@@ -18,11 +18,11 @@ export function ApplicationCard({ application, aid, jid, isStatic = false, safeR
                 {application.job && <p className="text-gray-500 dark:text-gray-200">{application.job.title}</p>}
             </header>
             <div className="group-data-[collapsible=icon]:-mx-4 flex gap-2">
-                <Avatar.Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
-                    <Avatar.AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
+                <Avatar className="shrink-0 cursor-pointer" tabIndex={0}>
+                    <AvatarFallback className="rounded-full bg-indigo-200 dark:bg-gray-800 size-10 group-data-[collapsible=icon]:size-8 flex items-center justify-center">
                         {application.user ? `${application.user.first_name[0]}${application.user.last_name[0]}` : "U"}
-                    </Avatar.AvatarFallback>
-                </Avatar.Avatar>
+                    </AvatarFallback>
+                </Avatar>
                 <div className="overflow-hidden group-data-[collapsible=icon]:hidden">
                     <p className="font-bold whitespace-nowrap text-ellipsis overflow-hidden text-start">
                         {application.user.first_name} {application.user.last_name}
