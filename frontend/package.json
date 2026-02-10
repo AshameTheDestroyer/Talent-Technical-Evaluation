@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build && node vercel/prepare.js",
     "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "build": "react-router build",
+    "typecheck": "react-router typegen && tsc",
+    "start": "react-router-serve ./build/server/index.js"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
