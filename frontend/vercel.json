@@ -1,5 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/server/index.js" }
+  "builds": [
+    { "src": "package.json", "use": "@vercel/react-router" }
   ]
 }
