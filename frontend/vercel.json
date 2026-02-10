@@ -1,5 +1,3 @@
 {
-  "builds": [
-    { "src": "package.json", "use": "@vercel/react-router" }
-  ]
+  "framework": "react-router"
 }
