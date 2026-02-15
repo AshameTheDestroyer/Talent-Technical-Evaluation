@@ -24,10 +24,21 @@ export function meta({}: Route.MetaArgs) {
 
 export default function JobDetailRoute() {
     const { id } = useParams();
-    const { data: job, isLoading: isJobLoading, isError: isJobError, refetch: refetchJob } = useGetJobByID({ id: id || "" });
-    const { data: { data: assessments, total } = { data: [] }, isLoading: isAssessmentsLoading, isError: isAssessmentsError, refetch: refetchAssessments } = useGetJobAssessments({ jid: id || "" });
+    const {
+        data: job,
+        isLoading: isJobLoading,
+        isError: isJobError,
+        refetch: refetchJob,
+    } = useGetJobByID({ id: id || "" });
+    const {
+        data: { data: assessments, total } = { data: [] },
+        isLoading: isAssessmentsLoading,
+        isError: isAssessmentsError,
+        refetch: refetchAssessments,
+    } = useGetJobAssessments({ jid: id || "" });
     const { data: myUser } = useGetMyUser();
-    const { mutateAsync: deleteJob, isPending: isDeletingJob } = useDeleteJobMutation();
+    const { mutateAsync: deleteJob, isPending: isDeletingJob } =
+        useDeleteJobMutation();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const isError = isJobError || isAssessmentsError;
@@ -63,7 +74,11 @@ export default function JobDetailRoute() {
         return (
             <main className="container mx-auto p-4 flex flex-col gap-2">
                 <div className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100 p-4 rounded flex flex-col gap-2 place-items-center">
-                    <p className="text-center">Failed to load job<br />Please try again</p>
+                    <p className="text-center">
+                        Failed to load job
+                        <br />
+                        Please try again
+                    </p>
                     <button
                         onClick={() => refetch()}
                         className="ml-4 px-3 py-1 cursor-pointer bg-red-500 text-white dark:bg-red-200 dark:text-red-700 rounded"
@@ -83,7 +98,11 @@ export default function JobDetailRoute() {
                     <h3 className="text-xl font-semibold">Job's Assessments</h3>
                     {myUser?.role == "hr" && (
                         <div className="flex flex-wrap gap-2 mb-2 sm:mb-0">
-                            <Button onClick={() => Navigate(`/jobs/${id}/assessments/generate`)}>
+                            <Button
+                                onClick={() =>
+                                    Navigate(`/jobs/${id}/assessments/generate`)
+                                }
+                            >
                                 <PlusIcon />
                                 Generate New Assessment
                             </Button>
@@ -100,12 +119,18 @@ export default function JobDetailRoute() {
                 {isDeleteModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                         <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
-                            <h4 className="text-lg font-semibold">Delete Job</h4>
+                            <h4 className="text-lg font-semibold">
+                                Delete Job
+                            </h4>
                             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                Are you sure you want to delete this job? This action cannot be undone.
+                                Are you sure you want to delete this job? This
+                                action cannot be undone.
                             </p>
                             <div className="mt-6 flex justify-end gap-3">
-                                <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setIsDeleteModalOpen(false)}
+                                >
                                     Cancel
                                 </Button>
                                 <Button
@@ -120,9 +145,17 @@ export default function JobDetailRoute() {
                     </div>
                 )}
                 {assessments.length === 0 && (
-                    <p className="text-center text-gray-600 dark:text-gray-300">No assessments found for this job.</p>
+                    <p className="text-center text-gray-600 dark:text-gray-300">
+                        No assessments found for this job.
+                    </p>
                 )}
-                {assessments?.map(assessment => <AssessmentCard key={assessment.id} assessment={assessment} jid={job.id} />)}
+                {assessments?.map((assessment) => (
+                    <AssessmentCard
+                        key={assessment.id}
+                        assessment={assessment}
+                        jid={job.id}
+                    />
+                ))}
                 {total != null && total > 0 && <Paginator total={total} />}
             </section>
         </main>

@@ -8,8 +8,11 @@ export type DeleteJobAssessmentPayload = {
     id: string;
 };
 
-export const useDeleteJobAssessmentMutation = () => useMutation({
-    mutationKey: [DELETE_JOB_ASSESSMENT_KEY],
-    mutationFn: async (payload: DeleteJobAssessmentPayload) =>
-        HTTPManager.delete(`/assessments/jobs/${payload.jid}/${payload.id}`).then(response => response.data),
-});
+export const useDeleteJobAssessmentMutation = () =>
+    useMutation({
+        mutationKey: [DELETE_JOB_ASSESSMENT_KEY],
+        mutationFn: async (payload: DeleteJobAssessmentPayload) =>
+            HTTPManager.delete(
+                `/assessments/jobs/${payload.jid}/${payload.id}`,
+            ).then((response) => response.data),
+    });

@@ -31,37 +31,68 @@ function formatTime(totalSeconds: number) {
 
 export default function AssessmentDetailRoute() {
     const { jid, id } = useParams();
-    const { data: assessment, isLoading, isError, refetch } = useGetJobAssessmentByID({ jid: jid || "", id: id || "" });
+    const {
+        data: assessment,
+        isLoading,
+        isError,
+        refetch,
+    } = useGetJobAssessmentByID({ jid: jid || "", id: id || "" });
     const [answers, setAnswers] = useState({} as Record<string, any>);
     const answersRef = useRef<Record<string, any>>({});
 
     const Navigate = useNavigate();
-    const { mutateAsync: submitAnswers, isPending: isSubmittingLoading } = usePostAssessmentApplication();
-    const { mutateAsync: deleteAssessment, isPending: isDeletingAssessment } = useDeleteJobAssessmentMutation();
-    const { data: myUser, isLoading: isMyUserLoading, isError: isMyUserError } = useGetMyUser();
+    const { mutateAsync: submitAnswers, isPending: isSubmittingLoading } =
+        usePostAssessmentApplication();
+    const { mutateAsync: deleteAssessment, isPending: isDeletingAssessment } =
+        useDeleteJobAssessmentMutation();
+    const {
+        data: myUser,
+        isLoading: isMyUserLoading,
+        isError: isMyUserError,
+    } = useGetMyUser();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const [started, setStarted] = useState(false);
-    const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
+    const [remainingSeconds, setRemainingSeconds] = useState<number | null>(
+        null,
+    );
     const [isSubmitted, setIsSubmitted] = useState(false);
     const timerRef = useRef<number | null>(null);
     const endAtRef = useRef<number | null>(null);
 
-    const setAnswersAndRef: React.Dispatch<React.SetStateAction<Record<string, any>>> = (updater) => {
-        setAnswers(prev => {
-            const next = typeof updater === "function" ? (updater as (p: Record<string, any>) => Record<string, any>)(prev) : updater;
+    const setAnswersAndRef: React.Dispatch<
+        React.SetStateAction<Record<string, any>>
+    > = (updater) => {
+        setAnswers((prev) => {
+            const next =
+                typeof updater === "function"
+                    ? (
+                          updater as (
+                              p: Record<string, any>,
+                          ) => Record<string, any>
+                      )(prev)
+                    : updater;
             answersRef.current = next;
             return next;
         });
     };
 
     useEffect(() => {
-        if (assessment == null || Object.entries(answersRef.current).length > 0) { return; }
+        if (
+            assessment == null ||
+            Object.entries(answersRef.current).length > 0
+        ) {
+            return;
+        }
 
-        const initial = assessment.questions.reduce((accumulator, question) => {
-            accumulator[question.id] = question.type === "choose_many" ? [] : "";
-            return accumulator;
-        }, {} as Record<string, any>);
+        const initial = assessment.questions.reduce(
+            (accumulator, question) => {
+                accumulator[question.id] =
+                    question.type === "choose_many" ? [] : "";
+                return accumulator;
+            },
+            {} as Record<string, any>,
+        );
 
         answersRef.current = initial;
         setAnswers(initial);
@@ -82,7 +113,10 @@ export default function AssessmentDetailRoute() {
         setRemainingSeconds(Math.ceil((endAtRef.current - Date.now()) / 1000));
 
         timerRef.current = window.setInterval(() => {
-            const rem = Math.max(0, Math.ceil(((endAtRef.current || 0) - Date.now()) / 1000));
+            const rem = Math.max(
+                0,
+                Math.ceil(((endAtRef.current || 0) - Date.now()) / 1000),
+            );
             setRemainingSeconds(rem);
 
             if (rem <= 0) {
@@ -119,7 +153,11 @@ export default function AssessmentDetailRoute() {
         return (
             <main className="container mx-auto p-4 flex flex-col gap-2">
                 <div className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100 p-4 rounded flex flex-col gap-2 place-items-center">
-                    <p className="text-center">Failed to load assessment<br />Please try again</p>
+                    <p className="text-center">
+                        Failed to load assessment
+                        <br />
+                        Please try again
+                    </p>
                     <button
                         onClick={() => refetch()}
                         className="ml-4 px-3 py-1 cursor-pointer bg-red-500 text-white dark:bg-red-200 dark:text-red-700 rounded"
@@ -133,7 +171,10 @@ export default function AssessmentDetailRoute() {
 
     if (!assessment || !myUser) return null;
 
-    const totalWeights = assessment.questions.reduce((weights, question) => weights + question.weight, 0);
+    const totalWeights = assessment.questions.reduce(
+        (weights, question) => weights + question.weight,
+        0,
+    );
 
     async function handleDeleteAssessment() {
         if (!jid || !id) return;
@@ -143,7 +184,9 @@ export default function AssessmentDetailRoute() {
             toast.success("Assessment deleted successfully");
             Navigate(`/jobs/${jid}`);
         } catch (error: any) {
-            toast.error(`Failed to delete assessment: ${error?.message || error}`);
+            toast.error(
+                `Failed to delete assessment: ${error?.message || error}`,
+            );
         }
     }
 
@@ -152,13 +195,21 @@ export default function AssessmentDetailRoute() {
         setIsSubmitted(true);
 
         try {
-            const payloadAnswers = Object.entries(answersRef.current).map(([question_id, answer]) => {
-                const isTextBased = assessment?.questions.find(q => q.id === question_id)?.type === "text_based";
-                return {
-                    question_id,
-                    [isTextBased ? "text" : "options"]: isTextBased ? answer : Array.isArray(answer) ? answer : [answer],
-                };
-            });
+            const payloadAnswers = Object.entries(answersRef.current).map(
+                ([question_id, answer]) => {
+                    const isTextBased =
+                        assessment?.questions.find((q) => q.id === question_id)
+                            ?.type === "text_based";
+                    return {
+                        question_id,
+                        [isTextBased ? "text" : "options"]: isTextBased
+                            ? answer
+                            : Array.isArray(answer)
+                              ? answer
+                              : [answer],
+                    };
+                },
+            );
 
             const result = await submitAnswers({
                 job_id: jid || "",
@@ -176,7 +227,9 @@ export default function AssessmentDetailRoute() {
             Navigate(`/my-applications/${result.id}`);
         } catch (error: any) {
             setIsSubmitted(false);
-            toast.error(`Failed to submit assessment: ${error?.message || error}`);
+            toast.error(
+                `Failed to submit assessment: ${error?.message || error}`,
+            );
         }
     }
 
@@ -185,7 +238,10 @@ export default function AssessmentDetailRoute() {
             <AssessmentCard jid={jid || ""} assessment={assessment} isStatic />
             {myUser.role == "hr" && (
                 <div className="flex flex-wrap items-center gap-3">
-                    <Link to={`/jobs/${jid}/assessments/${id}/applications`} className="text-indigo-600 hover:underline">
+                    <Link
+                        to={`/jobs/${jid}/assessments/${id}/applications`}
+                        className="text-indigo-600 hover:underline"
+                    >
                         View Applications for this Assessment
                         <ExternalLinkIcon className="inline -translate-y-1 mx-2" />
                     </Link>
@@ -194,24 +250,46 @@ export default function AssessmentDetailRoute() {
                         disabled={isDeletingAssessment}
                         onClick={() => setIsDeleteModalOpen(true)}
                     >
-                        {isDeletingAssessment ? "Deleting…" : "Delete Assessment"}
+                        {isDeletingAssessment
+                            ? "Deleting…"
+                            : "Delete Assessment"}
                     </Button>
                 </div>
             )}
             <section className="flex flex-col gap-6">
                 <header className="flex gap-4 place-content-between flex-wrap items-center">
-                    <h3 className="text-xl font-semibold">Assessment's Questions</h3>
+                    <h3 className="text-xl font-semibold">
+                        Assessment's Questions
+                    </h3>
                     <span className="flex gap-2 place-items-center px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-gray-700">
-                        <HourglassIcon className={started ? "animate-spin" : ""} />
-                        <p>{started ? formatTime(remainingSeconds ?? 0) : formatTime(Number(assessment.duration || 0))}</p>
+                        <HourglassIcon
+                            className={started ? "animate-spin" : ""}
+                        />
+                        <p>
+                            {started
+                                ? formatTime(remainingSeconds ?? 0)
+                                : formatTime(Number(assessment.duration || 0))}
+                        </p>
                     </span>
                 </header>
 
                 <div className="relative">
-                    <div className={`${!started && myUser.role === "applicant" ? "pointer-events-none select-none filter blur-sm min-h-[80vh]" : ""} transition-all`}>
+                    <div
+                        className={`${!started && myUser.role === "applicant" ? "pointer-events-none select-none filter blur-sm min-h-[80vh]" : ""} transition-all`}
+                    >
                         <div className="flex flex-col gap-4">
-                            {(!started && myUser.role === "applicant" ? assessment.questions.slice(0, 3) : assessment.questions).map((question) => (
-                                <QuestionCard key={question.id} question={question} totalWeights={totalWeights} answers={answers} setAnswers={setAnswersAndRef} isStatic={myUser.role == "hr"} />
+                            {(!started && myUser.role === "applicant"
+                                ? assessment.questions.slice(0, 3)
+                                : assessment.questions
+                            ).map((question) => (
+                                <QuestionCard
+                                    key={question.id}
+                                    question={question}
+                                    totalWeights={totalWeights}
+                                    answers={answers}
+                                    setAnswers={setAnswersAndRef}
+                                    isStatic={myUser.role == "hr"}
+                                />
                             ))}
                         </div>
                     </div>
@@ -220,11 +298,28 @@ export default function AssessmentDetailRoute() {
                         <div className="absolute inset-0 z-10 flex items-center justify-center scale-102">
                             <div className="w-full h-full bg-white/60 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center">
                                 <div className="text-center p-6 bg-white/90 dark:bg-gray-800 rounded shadow">
-                                    <h4 className="text-lg font-semibold mb-2">Ready to start?</h4>
-                                    <p className="text-sm text-gray-600 mb-4">When you start the assessment the timer will begin and questions will be revealed.</p>
+                                    <h4 className="text-lg font-semibold mb-2">
+                                        Ready to start?
+                                    </h4>
+                                    <p className="text-sm text-gray-600 mb-4">
+                                        When you start the assessment the timer
+                                        will begin and questions will be
+                                        revealed.
+                                    </p>
                                     <div className="flex gap-3 justify-center">
-                                        <Button variant="outline" onClick={() => Navigate(`/jobs/${jid}`)}>Cancel</Button>
-                                        <Button onClick={() => setStarted(true)}>Start Assessment</Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() =>
+                                                Navigate(`/jobs/${jid}`)
+                                            }
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            onClick={() => setStarted(true)}
+                                        >
+                                            Start Assessment
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -235,12 +330,18 @@ export default function AssessmentDetailRoute() {
             {isDeleteModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
-                        <h4 className="text-lg font-semibold">Delete Assessment</h4>
+                        <h4 className="text-lg font-semibold">
+                            Delete Assessment
+                        </h4>
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                            Are you sure you want to delete this assessment? This action cannot be undone.
+                            Are you sure you want to delete this assessment?
+                            This action cannot be undone.
                         </p>
                         <div className="mt-6 flex justify-end gap-3">
-                            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsDeleteModalOpen(false)}
+                            >
                                 Cancel
                             </Button>
                             <Button
@@ -257,7 +358,9 @@ export default function AssessmentDetailRoute() {
             <footer className="mx-auto py-4">
                 {myUser.role === "applicant" && (
                     <Button
-                        disabled={!started || isSubmittingLoading || isSubmitted}
+                        disabled={
+                            !started || isSubmittingLoading || isSubmitted
+                        }
                         className="bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50"
                         onClick={() => void handleSubmit(false)}
                     >
