@@ -9,6 +9,7 @@ import type { Route } from "./+types/jobs.$jid.assessments.$id";
 import { ExternalLinkIcon, HourglassIcon, Loader2Icon } from "lucide-react";
 import { useGetJobAssessmentByID } from "~/services/useGetJobAssessmentByID";
 import { usePostAssessmentApplication } from "~/services/usePostAssessmentApplication";
+import { useDeleteJobAssessmentMutation } from "~/services/useDeleteJobAssessmentMutation";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -36,7 +37,9 @@ export default function AssessmentDetailRoute() {
 
     const Navigate = useNavigate();
     const { mutateAsync: submitAnswers, isPending: isSubmittingLoading } = usePostAssessmentApplication();
+    const { mutateAsync: deleteAssessment, isPending: isDeletingAssessment } = useDeleteJobAssessmentMutation();
     const { data: myUser, isLoading: isMyUserLoading, isError: isMyUserError } = useGetMyUser();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const [started, setStarted] = useState(false);
     const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
@@ -132,6 +135,18 @@ export default function AssessmentDetailRoute() {
 
     const totalWeights = assessment.questions.reduce((weights, question) => weights + question.weight, 0);
 
+    async function handleDeleteAssessment() {
+        if (!jid || !id) return;
+
+        try {
+            await deleteAssessment({ jid, id });
+            toast.success("Assessment deleted successfully");
+            Navigate(`/jobs/${jid}`);
+        } catch (error: any) {
+            toast.error(`Failed to delete assessment: ${error?.message || error}`);
+        }
+    }
+
     async function handleSubmit(isAuto = false) {
         if (isSubmitted) return;
         setIsSubmitted(true);
@@ -169,10 +184,19 @@ export default function AssessmentDetailRoute() {
         <main className="container mx-auto p-4 flex flex-col gap-8">
             <AssessmentCard jid={jid || ""} assessment={assessment} isStatic />
             {myUser.role == "hr" && (
-                <Link to={`/jobs/${jid}/assessments/${id}/applications`} className="text-indigo-600 hover:underline">
-                    View Applications for this Assessment
-                    <ExternalLinkIcon className="inline -translate-y-1 mx-2" />
-                </Link>
+                <div className="flex flex-wrap items-center gap-3">
+                    <Link to={`/jobs/${jid}/assessments/${id}/applications`} className="text-indigo-600 hover:underline">
+                        View Applications for this Assessment
+                        <ExternalLinkIcon className="inline -translate-y-1 mx-2" />
+                    </Link>
+                    <Button
+                        className="bg-red-600 text-white hover:bg-red-700"
+                        disabled={isDeletingAssessment}
+                        onClick={() => setIsDeleteModalOpen(true)}
+                    >
+                        {isDeletingAssessment ? "Deleting…" : "Delete Assessment"}
+                    </Button>
+                </div>
             )}
             <section className="flex flex-col gap-6">
                 <header className="flex gap-4 place-content-between flex-wrap items-center">
@@ -208,6 +232,28 @@ export default function AssessmentDetailRoute() {
                     )}
                 </div>
             </section>
+            {isDeleteModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+                        <h4 className="text-lg font-semibold">Delete Assessment</h4>
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                            Are you sure you want to delete this assessment? This action cannot be undone.
+                        </p>
+                        <div className="mt-6 flex justify-end gap-3">
+                            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button
+                                className="bg-red-600 text-white hover:bg-red-700"
+                                disabled={isDeletingAssessment}
+                                onClick={() => void handleDeleteAssessment()}
+                            >
+                                {isDeletingAssessment ? "Deleting…" : "Delete"}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <footer className="mx-auto py-4">
                 {myUser.role === "applicant" && (
                     <Button

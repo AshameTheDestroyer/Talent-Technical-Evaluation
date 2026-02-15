@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router";
-import {Loader2Icon, PlusIcon, } from "lucide-react";
+import { toast } from "react-toastify";
+import { Loader2Icon, PlusIcon } from "lucide-react";
 import type { Route } from "./+types/jobs.$id";
 import { JobCard } from "~/components/job-card";
 import { Paginator } from "~/components/paginator";
@@ -8,6 +9,8 @@ import { AssessmentCard } from "~/components/assessment-card";
 import { useGetJobAssessments } from "~/services/useGetJobAssessments";
 import { Button } from "~/components/ui/button";
 import { useGetMyUser } from "~/services/useGetMyUser";
+import { useDeleteJobMutation } from "~/services/useDeleteJobMutation";
+import { useState } from "react";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -24,12 +27,26 @@ export default function JobDetailRoute() {
     const { data: job, isLoading: isJobLoading, isError: isJobError, refetch: refetchJob } = useGetJobByID({ id: id || "" });
     const { data: { data: assessments, total } = { data: [] }, isLoading: isAssessmentsLoading, isError: isAssessmentsError, refetch: refetchAssessments } = useGetJobAssessments({ jid: id || "" });
     const { data: myUser } = useGetMyUser();
+    const { mutateAsync: deleteJob, isPending: isDeletingJob } = useDeleteJobMutation();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const isError = isJobError || isAssessmentsError;
     const isLoading = isJobLoading || isAssessmentsLoading;
     const refetch = () => (refetchJob(), refetchAssessments());
 
     const Navigate = useNavigate();
+
+    async function handleDeleteJob() {
+        if (!job?.id) return;
+
+        try {
+            await deleteJob({ id: job.id });
+            toast.success("Job deleted successfully");
+            Navigate("/jobs");
+        } catch (error: any) {
+            toast.error(`Failed to delete job: ${error?.message || error}`);
+        }
+    }
 
     if (isLoading) {
         return (
@@ -62,15 +79,46 @@ export default function JobDetailRoute() {
         <main className="container mx-auto p-4 flex flex-col gap-8">
             <JobCard job={job} isStatic />
             <section className="flex flex-col gap-4">
-                 <div className="flex gap-2 place-content-between flex-wrap">
+                <div className="flex gap-2 place-content-between flex-wrap">
                     <h3 className="text-xl font-semibold">Job's Assessments</h3>
                     {myUser?.role == "hr" && (
-                        <Button className="mb-2 sm:mb-0" onClick={() => Navigate(`/jobs/${id}/assessments/generate`)}>
-                            <PlusIcon />
-                            Generate New Assessment
-                        </Button>
+                        <div className="flex flex-wrap gap-2 mb-2 sm:mb-0">
+                            <Button onClick={() => Navigate(`/jobs/${id}/assessments/generate`)}>
+                                <PlusIcon />
+                                Generate New Assessment
+                            </Button>
+                            <Button
+                                className="bg-red-600 text-white hover:bg-red-700"
+                                disabled={isDeletingJob}
+                                onClick={() => setIsDeleteModalOpen(true)}
+                            >
+                                {isDeletingJob ? "Deleting…" : "Delete Job"}
+                            </Button>
+                        </div>
                     )}
                 </div>
+                {isDeleteModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                        <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+                            <h4 className="text-lg font-semibold">Delete Job</h4>
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                Are you sure you want to delete this job? This action cannot be undone.
+                            </p>
+                            <div className="mt-6 flex justify-end gap-3">
+                                <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    className="bg-red-600 text-white hover:bg-red-700"
+                                    disabled={isDeletingJob}
+                                    onClick={() => void handleDeleteJob()}
+                                >
+                                    {isDeletingJob ? "Deleting…" : "Delete"}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 {assessments.length === 0 && (
                     <p className="text-center text-gray-600 dark:text-gray-300">No assessments found for this job.</p>
                 )}
