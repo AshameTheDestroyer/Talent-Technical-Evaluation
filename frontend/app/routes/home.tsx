@@ -2,10 +2,10 @@ import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
     return [
-        { title: "Talent Technical Evaluation" },
+        { title: "Skill Sight" },
         {
             name: "description",
-            content: "Welcome to Talent Technical Evaluation!",
+            content: "Welcome to Skill Sight!",
         },
     ];
 }

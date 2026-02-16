@@ -1,3 +1,5 @@
+# SkillSight
+
 # AI-Powered Hiring Assessment Platform Backend
 
 ## Project Overview
@@ -5,6 +7,7 @@
 This is a FastAPI-based backend application for an AI-powered hiring assessment platform. The system enables HR professionals to create and manage assessments for job candidates, while allowing candidates to take assessments and review their results.
 
 The application follows a clean architecture with proper separation of concerns:
+
 - **API Layer**: Handles HTTP requests and responses
 - **Service Layer**: Contains business logic
 - **Database Layer**: Manages database connections and sessions
@@ -24,6 +27,7 @@ The application follows a clean architecture with proper separation of concerns:
 ## Architecture Components
 
 ### Directory Structure
+
 ```
 backend/
 ├── api/                 # API route definitions
@@ -63,33 +67,36 @@ backend/
 ### Key Features
 
 1. **User Management**:
-   - Registration and authentication
-   - Role-based access (HR vs Applicant)
+    - Registration and authentication
+    - Role-based access (HR vs Applicant)
 
 2. **Job Management**:
-   - Create, update, delete job postings
-   - Manage job details and requirements
+    - Create, update, delete job postings
+    - Manage job details and requirements
 
 3. **Assessment Management**:
-   - Create assessments linked to jobs
-   - Define questions and passing scores
-   - Regenerate assessments with new questions
+    - Create assessments linked to jobs
+    - Define questions and passing scores
+    - Regenerate assessments with new questions
 
 4. **Application Management**:
-   - Submit applications with answers
-   - Track application results and scores
+    - Submit applications with answers
+    - Track application results and scores
 
 ### API Endpoints
 
 #### Registration
+
 - `POST /registration/signup` - User registration
 - `POST /registration/login` - User login
 - `POST /registration/logout` - User logout
 
 #### Users
+
 - `GET /users/{id}` - Get user details
 
 #### Jobs
+
 - `GET /jobs` - List jobs
 - `GET /jobs/{id}` - Get job details
 - `POST /jobs` - Create job
@@ -97,6 +104,7 @@ backend/
 - `DELETE /jobs/{id}` - Delete job
 
 #### Assessments
+
 - `GET /assessments/jobs/{jid}` - List assessments for a job
 - `GET /assessments/jobs/{jid}/{aid}` - Get assessment details
 - `POST /assessments/jobs/{id}` - Create assessment
@@ -105,10 +113,12 @@ backend/
 - `DELETE /assessments/jobs/{jid}/{aid}` - Delete assessment
 
 #### Applications
+
 - `GET /applications/jobs/{jid}/assessments/{aid}` - List applications
 - `POST /applications/jobs/{jid}/assessments/{aid}` - Create application
 
 #### Health Check
+
 - `GET /` - Root endpoint
 - `GET /health` - Health check endpoint
 
@@ -144,36 +154,43 @@ APP_DESCRIPTION=MVP for managing hiring assessments using AI
 ## Building and Running
 
 ### Prerequisites
+
 - Python 3.11+
 - pip package manager
 
 ### Setup Instructions
 
 1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
 2. **Set Up Environment Variables**:
    Copy the `.env.example` file to `.env` and adjust the values as needed.
 
 3. **Run Database Migrations**:
-   ```bash
-   alembic upgrade head
-   ```
+
+    ```bash
+    alembic upgrade head
+    ```
 
 4. **Start the Application**:
-   ```bash
-   python main.py
-   ```
-   
-   Or using uvicorn directly:
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-   ```
+
+    ```bash
+    python main.py
+    ```
+
+    Or using uvicorn directly:
+
+    ```bash
+    uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ```
 
 ### Development Mode
+
 For development, you can run the application with hot-reloading enabled:
+
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
@@ -181,6 +198,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ## Testing
 
 To run tests (when available):
+
 ```bash
 pytest
 ```
@@ -188,6 +206,7 @@ pytest
 ## Logging
 
 The application implements comprehensive logging through the `logging_config.py` module:
+
 - Logs are written to both file (`app.log`) and console
 - Log level can be configured via the `LOG_LEVEL` environment variable
 - Different log levels (DEBUG, INFO, WARNING, ERROR) are used appropriately
@@ -196,6 +215,7 @@ The application implements comprehensive logging through the `logging_config.py`
 ## Database Migrations
 
 The application uses Alembic for database migrations:
+
 - To create a new migration: `alembic revision --autogenerate -m "Description"`
 - To apply migrations: `alembic upgrade head`
 - To check current migration status: `alembic current`
@@ -203,25 +223,25 @@ The application uses Alembic for database migrations:
 ## Development Conventions
 
 1. **Code Style**:
-   - Follow PEP 8 guidelines
-   - Use type hints for all function parameters and return values
-   - Write docstrings for all public functions and classes
+    - Follow PEP 8 guidelines
+    - Use type hints for all function parameters and return values
+    - Write docstrings for all public functions and classes
 
 2. **Error Handling**:
-   - Use appropriate HTTP status codes
-   - Return meaningful error messages
-   - Log errors appropriately
+    - Use appropriate HTTP status codes
+    - Return meaningful error messages
+    - Log errors appropriately
 
 3. **Security**:
-   - Passwords should be hashed (currently using placeholder)
-   - Input validation through Pydantic schemas
-   - SQL injection prevention through SQLAlchemy ORM
+    - Passwords should be hashed (currently using placeholder)
+    - Input validation through Pydantic schemas
+    - SQL injection prevention through SQLAlchemy ORM
 
 4. **Architecture**:
-   - Keep business logic in service layer
-   - Use dependency injection for database sessions
-   - Separate API routes by domain/model
-   - Maintain clear separation between layers
+    - Keep business logic in service layer
+    - Use dependency injection for database sessions
+    - Separate API routes by domain/model
+    - Maintain clear separation between layers
 
 ## Future Enhancements
 
@@ -233,8 +253,8 @@ The application uses Alembic for database migrations:
 - Unit and integration tests
 
 # TODO:
-- when creating an assessment we should pass the questions of the assessment. 
-- all APIs input and output should have a cleare schema, even the enums should be clear and apear in the swagger apis (when visiting /docs)
-- the validation of the inputs should be done by pydantic and in the model level, not in the model level only! 
-- the answers is not a model itself, so the services/answer functions should be aware of that. 
 
+- when creating an assessment we should pass the questions of the assessment.
+- all APIs input and output should have a cleare schema, even the enums should be clear and apear in the swagger apis (when visiting /docs)
+- the validation of the inputs should be done by pydantic and in the model level, not in the model level only!
+- the answers is not a model itself, so the services/answer functions should be aware of that.

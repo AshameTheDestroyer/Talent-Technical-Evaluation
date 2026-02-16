@@ -25,6 +25,7 @@ docker-compose up --build
 ```
 
 This command will:
+
 - Build the backend image
 - Start the backend service
 - Expose the application on port 8000
@@ -32,6 +33,7 @@ This command will:
 ### 3. Access the Application
 
 Once the containers are running, you can access the application at:
+
 - API Documentation: http://localhost:8000/docs
 - Health Check: http://localhost:8000/health
 
@@ -40,13 +42,15 @@ Once the containers are running, you can access the application at:
 If you prefer to build and run individual containers:
 
 #### Build the Image
+
 ```bash
-docker build -t assessment-platform-backend .
+docker build -t skill-sight-backend .
 ```
 
 #### Run the Container
+
 ```bash
-docker run -p 8000:8000 assessment-platform-backend
+docker run -p 8000:8000 skill-sight-backend
 ```
 
 ## Environment Variables

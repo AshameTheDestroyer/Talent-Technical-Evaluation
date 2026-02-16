@@ -1,4 +1,4 @@
-# Talent Technical Evaluation
+# Skill Sight
 
 Comprehensive full‑stack ai-powered sample application for creating, managing, and evaluating hiring assessments. This repository contains a Python FastAPI backend and a TypeScript React frontend built with Vite and React Router. The project demonstrates common hiring workflows including job posting, assessment creation, candidate application, and AI-assisted scoring.
 
@@ -31,8 +31,7 @@ Follow these steps to run the backend and frontend locally.
 ### Backend
 
 1. Change to the backend directory:
-
-   - `cd backend`
+    - `cd backend`
 
 2. Create a virtual environment and activate it:
 
@@ -48,8 +47,7 @@ pip install -r requirements.txt
 ```
 
 4. Create an environment file:
-
-   - Copy `.env.example` to `.env` and update values as needed (DB URL, secrets, AI keys).
+    - Copy `.env.example` to `.env` and update values as needed (DB URL, secrets, AI keys).
 
 5. Run database migrations (Alembic):
 
@@ -70,8 +68,7 @@ See backend-specific notes in [backend/README.md](backend/README.md).
 ### Frontend
 
 1. Change to the frontend directory:
-
-   - `cd frontend`
+    - `cd frontend`
 
 2. Install dependencies:
 
@@ -80,8 +77,7 @@ npm install
 ```
 
 3. Create an environment file:
-
-   - Copy `.env.example` to `.env` and set the API URL and any other values required.
+    - Copy `.env.example` to `.env` and set the API URL and any other values required.
 
 4. Start the development server:
 

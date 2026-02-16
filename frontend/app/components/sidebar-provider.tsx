@@ -1,12 +1,14 @@
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
-import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Link, useLocation } from "react-router";
 import { HTTPManager } from "~/managers/HTTPManager";
 import { useGetMyUser } from "~/services/useGetMyUser";
+import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Building2Icon, FilesIcon, LayoutDashboardIcon } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarInset, SidebarProvider as SidebarProvider_ } from "./ui/sidebar";
+
+import favicon from "/favicon.svg";
 
 const LINKS = [
     { title: "Jobs", to: "/jobs", icon: Building2Icon },
@@ -30,8 +32,11 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     return (
         <SidebarProvider_>
             <Sidebar collapsible="icon" className="p-4  bg-indigo-100 dark:bg-slate-950">
-                <SidebarHeader className="mb-4 group-data-[collapsible=icon]:hidden border-b-2 border-indigo-300 dark:border-slate-700 pb-4">
-                    <h1 className="font-bold text-ellipsis overflow-hidden whitespace-nowrap">Talent Technical Evaluation</h1>
+                <SidebarHeader className="mb-4 group-data-[collapsible=icon]:hidden border-b-2 flex flex-row gap-1 place-items-center border-indigo-300 dark:border-slate-700 pb-4">
+                    <img src={favicon} alt="Skill Sight" className="size-10 mr-2 filter-[drop-shadow(1px_1px_1px_#000)]" />
+                    <h1 className="font-bold text-ellipsis overflow-hidden whitespace-nowrap">
+                        Skill Sight
+                    </h1>
                 </SidebarHeader>
                 <SidebarContent>
                     {LINKS.filter(link => !link.role || link.role === myUser?.role).map(({title,to,icon: Icon}, i) => (
